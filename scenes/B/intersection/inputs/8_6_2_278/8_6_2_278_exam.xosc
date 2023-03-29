@@ -1,0 +1,1454 @@
+<?xml version='1.0' encoding='utf-8'?>
+<OpenSCENARIO>
+	<FileHeader revMajor="1" revMinor="0" date="2023-03-22T11:27:00" description="scenario_SinD" author="OnSite_TOPS" />
+	<ParameterDeclarations />
+	<CatalogLocations />
+	<RoadNetwork>
+		<LogicFile filepath="8_6_2_278.xodr" />
+	</RoadNetwork>
+	<Entities>
+		<ScenarioObject name="Ego">
+			<Vehicle name="Default_car" vehicleCategory="car">
+				<BoundingBox>
+					<Center x="1.5000000000000000e+00" y="0.0000000000000000e+00" z="9.0000000000000002e-01" />
+					<Dimensions width="1.8035346662885368e+00" length="4.6474105886563644e+00" height="1.8000000000000000e+00" />
+				</BoundingBox>
+				<Performance maxSpeed="200" maxAcceleration="200" maxDeceleration="10.0" />
+				<Axles>
+					<FrontAxle maxSteering="0.5" wheelDiameter="0.5" trackWidth="1.75" positionX="2.8" positionZ="0.25" />
+					<RearAxle maxSteering="0.0" wheelDiameter="0.5" trackWidth="1.75" positionX="0.0" positionZ="0.25" />
+				</Axles>
+				<Properties />
+			</Vehicle>
+		</ScenarioObject>
+		<ScenarioObject name="A1">
+			<Vehicle name="Default_car" vehicleCategory="car">
+				<BoundingBox>
+					<Center x="1.5000000000000000e+00" y="0.0000000000000000e+00" z="9.0000000000000002e-01" />
+					<Dimensions width="1.8219545994006847e+00" length="4.7078664030380866e+00" height="1.8000000000000000e+00" />
+				</BoundingBox>
+				<Performance maxSpeed="200" maxAcceleration="200" maxDeceleration="10.0" />
+				<Axles>
+					<FrontAxle maxSteering="0.5" wheelDiameter="0.5" trackWidth="1.75" positionX="2.8" positionZ="0.25" />
+					<RearAxle maxSteering="0.0" wheelDiameter="0.5" trackWidth="1.75" positionX="0.0" positionZ="0.25" />
+				</Axles>
+				<Properties />
+			</Vehicle>
+		</ScenarioObject>
+		<ScenarioObject name="A2">
+			<Vehicle name="Default_car" vehicleCategory="car">
+				<BoundingBox>
+					<Center x="1.5000000000000000e+00" y="0.0000000000000000e+00" z="9.0000000000000002e-01" />
+					<Dimensions width="1.8400149047986150e+00" length="4.7411171620336372e+00" height="1.8000000000000000e+00" />
+				</BoundingBox>
+				<Performance maxSpeed="200" maxAcceleration="200" maxDeceleration="10.0" />
+				<Axles>
+					<FrontAxle maxSteering="0.5" wheelDiameter="0.5" trackWidth="1.75" positionX="2.8" positionZ="0.25" />
+					<RearAxle maxSteering="0.0" wheelDiameter="0.5" trackWidth="1.75" positionX="0.0" positionZ="0.25" />
+				</Axles>
+				<Properties />
+			</Vehicle>
+		</ScenarioObject>
+		<ScenarioObject name="A3">
+			<Vehicle name="Default_car" vehicleCategory="car">
+				<BoundingBox>
+					<Center x="1.5000000000000000e+00" y="0.0000000000000000e+00" z="9.0000000000000002e-01" />
+					<Dimensions width="1.9609212716278079e+00" length="5.3126904177993639e+00" height="1.8000000000000000e+00" />
+				</BoundingBox>
+				<Performance maxSpeed="200" maxAcceleration="200" maxDeceleration="10.0" />
+				<Axles>
+					<FrontAxle maxSteering="0.5" wheelDiameter="0.5" trackWidth="1.75" positionX="2.8" positionZ="0.25" />
+					<RearAxle maxSteering="0.0" wheelDiameter="0.5" trackWidth="1.75" positionX="0.0" positionZ="0.25" />
+				</Axles>
+				<Properties />
+			</Vehicle>
+		</ScenarioObject>
+	</Entities>
+	<Storyboard>
+		<Init>
+			<Actions>
+				<GlobalAction>
+					<EnvironmentAction>
+						<Environment name="Default_Environment">
+							<TimeOfDay animation="false" dateTime="2023-03-05T11:36:00" />
+							<Weather cloudState="free">
+								<Sun intensity="1.0" azimuth="0.0" elevation="1.571" />
+								<Fog visualRange="100000.0" />
+								<Precipitation precipitationType="dry" intensity="0.0" />
+							</Weather>
+							<RoadCondition frictionScaleFactor="1.0" />
+						</Environment>
+					</EnvironmentAction>
+				</GlobalAction>
+				<Private entityRef="Ego">
+					<!--Information of the ego vehicle will be hidden, and its initial state and driving task will be explained in the comments below-->
+					<!--[Initial State] v_init = 2.7835042379374544, x_init = -13.836400109594353, y_init = 14.909030185046358, heading_init = 0.0314159265358975-->
+					<!--[Driving Task] x_target = (9.702804575501087, 19.702804575501087), y_target = (36.90255573288378, 38.90255573288378)-->
+				</Private>
+			</Actions>
+		</Init>
+		<Story name="inside_intersection">
+			<ParameterDeclarations />
+			<Act name="Act_A1">
+				<ManeuverGroup maximumExecutionCount="1" name="Squence_A1">
+					<Actors selectTriggeringEntities="false">
+						<EntityRef entityRef="A1" />
+					</Actors>
+					<Maneuver name="Maneuver1">
+						<Event name="Event1" priority="overwrite">
+							<Action name="Action1">
+								<PrivateAction>
+									<RoutingAction>
+										<FollowTrajectoryAction>
+											<Trajectory name="Trajectory_A1" closed="false">
+												<Shape>
+													<Polyline>
+														<Vertex time="0.0">
+															<Position>
+																<WorldPosition x="2.6266148966489240e+01" y="1.8054570162711137e+01" z="0.0000000000000000e+00" h="3.1751490045509532e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.1">
+															<Position>
+																<WorldPosition x="2.5906228049164604e+01" y="1.8050823502681546e+01" z="0.0000000000000000e+00" h="3.1742208261835372e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.2">
+															<Position>
+																<WorldPosition x="2.5543260986399023e+01" y="1.8047006456451271e+01" z="0.0000000000000000e+00" h="3.1735085566650012e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.30000000000000004">
+															<Position>
+																<WorldPosition x="2.5177321597829067e+01" y="1.8042202659865328e+01" z="0.0000000000000000e+00" h="3.1731146872783489e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.4">
+															<Position>
+																<WorldPosition x="2.4809420005456360e+01" y="1.8037637160920731e+01" z="0.0000000000000000e+00" h="3.1729284518310936e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.5">
+															<Position>
+																<WorldPosition x="2.4441023106097067e+01" y="1.8033992648612152e+01" z="0.0000000000000000e+00" h="3.1728575328836159e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.6000000000000001">
+															<Position>
+																<WorldPosition x="2.4073983345448120e+01" y="1.8031446181354511e+01" z="0.0000000000000000e+00" h="3.1728430795299860e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.7000000000000001">
+															<Position>
+																<WorldPosition x="2.3710274406412530e+01" y="1.8029247387662164e+01" z="0.0000000000000000e+00" h="3.1728511975051656e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.8">
+															<Position>
+																<WorldPosition x="2.3351107888743467e+01" y="1.8027528395544991e+01" z="0.0000000000000000e+00" h="3.1728675891608678e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.9">
+															<Position>
+																<WorldPosition x="2.2994508605041403e+01" y="1.8025325088560450e+01" z="0.0000000000000000e+00" h="3.1728824570216920e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.0">
+															<Position>
+																<WorldPosition x="2.2641366957416590e+01" y="1.8022536600294234e+01" z="0.0000000000000000e+00" h="3.1728946317747511e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.1">
+															<Position>
+																<WorldPosition x="2.2289782674343712e+01" y="1.8019156679441320e+01" z="0.0000000000000000e+00" h="3.1729027955336790e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.2000000000000002">
+															<Position>
+																<WorldPosition x="2.1940602078247355e+01" y="1.8015407213633392e+01" z="0.0000000000000000e+00" h="3.1729095155061886e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.3">
+															<Position>
+																<WorldPosition x="2.1592532896678851e+01" y="1.8011578419072610e+01" z="0.0000000000000000e+00" h="3.1729156239014755e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.4000000000000001">
+															<Position>
+																<WorldPosition x="2.1247440269289051e+01" y="1.8006468505954693e+01" z="0.0000000000000000e+00" h="3.1729169055909039e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.5">
+															<Position>
+																<WorldPosition x="2.0908449130650148e+01" y="1.8001429841335192e+01" z="0.0000000000000000e+00" h="3.1729169873071736e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.6">
+															<Position>
+																<WorldPosition x="2.0571803639636773e+01" y="1.7997330722272089e+01" z="0.0000000000000000e+00" h="3.1729217779459535e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.7000000000000002">
+															<Position>
+																<WorldPosition x="2.0237994807046967e+01" y="1.7993161629797825e+01" z="0.0000000000000000e+00" h="3.1729326960087878e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.8">
+															<Position>
+																<WorldPosition x="1.9905823723633119e+01" y="1.7988484103538944e+01" z="0.0000000000000000e+00" h="3.1729474343690036e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.9000000000000001">
+															<Position>
+																<WorldPosition x="1.9569999846083540e+01" y="1.7982565621657564e+01" z="0.0000000000000000e+00" h="3.1729607625284597e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.0">
+															<Position>
+																<WorldPosition x="1.9230631787898080e+01" y="1.7974943635178370e+01" z="0.0000000000000000e+00" h="3.1729694533390118e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.1">
+															<Position>
+																<WorldPosition x="1.8890127554322344e+01" y="1.7966856109302565e+01" z="0.0000000000000000e+00" h="3.1729766706604838e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.2">
+															<Position>
+																<WorldPosition x="1.8548325196590422e+01" y="1.7958568191056489e+01" z="0.0000000000000000e+00" h="3.1729848158462164e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.3000000000000003">
+															<Position>
+																<WorldPosition x="1.8207658387886919e+01" y="1.7949965431383760e+01" z="0.0000000000000000e+00" h="3.1729948739165437e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.4000000000000004">
+															<Position>
+																<WorldPosition x="1.7868752223163259e+01" y="1.7940853432609511e+01" z="0.0000000000000000e+00" h="3.1730053055447809e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.5">
+															<Position>
+																<WorldPosition x="1.7531868944015024e+01" y="1.7930641812739005e+01" z="0.0000000000000000e+00" h="3.1730115920268060e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.6">
+															<Position>
+																<WorldPosition x="1.7200122265453686e+01" y="1.7920159546240011e+01" z="0.0000000000000000e+00" h="3.1730140154616766e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.7">
+															<Position>
+																<WorldPosition x="1.6871581545054195e+01" y="1.7909450579451839e+01" z="0.0000000000000000e+00" h="3.1730118736944153e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.8000000000000003">
+															<Position>
+																<WorldPosition x="1.6547705110618232e+01" y="1.7898381390494826e+01" z="0.0000000000000000e+00" h="3.1730037363397554e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.9000000000000004">
+															<Position>
+																<WorldPosition x="1.6231655404690695e+01" y="1.7888465363567438e+01" z="0.0000000000000000e+00" h="3.1729955260751974e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.0">
+															<Position>
+																<WorldPosition x="1.5924123858862524e+01" y="1.7879582434466727e+01" z="0.0000000000000000e+00" h="3.1729907617650377e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.1">
+															<Position>
+																<WorldPosition x="1.5624919185414925e+01" y="1.7871497218558261e+01" z="0.0000000000000000e+00" h="3.1729907503202424e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.2">
+															<Position>
+																<WorldPosition x="1.5333965332704292e+01" y="1.7863643719779251e+01" z="0.0000000000000000e+00" h="3.1729938318955084e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.3000000000000003">
+															<Position>
+																<WorldPosition x="1.5051667951120621e+01" y="1.7855511948635264e+01" z="0.0000000000000000e+00" h="3.1729969824393400e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.4000000000000004">
+															<Position>
+																<WorldPosition x="1.4777121199878470e+01" y="1.7848159940325754e+01" z="0.0000000000000000e+00" h="3.1730036317815520e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.5">
+															<Position>
+																<WorldPosition x="1.4509754126046774e+01" y="1.7839908614572035e+01" z="0.0000000000000000e+00" h="3.1730077966393933e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.6">
+															<Position>
+																<WorldPosition x="1.4248503181376632e+01" y="1.7831584283376475e+01" z="0.0000000000000000e+00" h="3.1730094229610697e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.7">
+															<Position>
+																<WorldPosition x="1.3992405117097734e+01" y="1.7823456304826660e+01" z="0.0000000000000000e+00" h="3.1730102285749702e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.8000000000000003">
+															<Position>
+																<WorldPosition x="1.3740309610900614e+01" y="1.7815259073860464e+01" z="0.0000000000000000e+00" h="3.1730104113713407e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.9000000000000004">
+															<Position>
+																<WorldPosition x="1.3491640013360891e+01" y="1.7808077552491721e+01" z="0.0000000000000000e+00" h="3.1730164119403299e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.0">
+															<Position>
+																<WorldPosition x="1.3244319943958413e+01" y="1.7800437126923935e+01" z="0.0000000000000000e+00" h="3.1730250867691132e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.1000000000000005">
+															<Position>
+																<WorldPosition x="1.2997475405683948e+01" y="1.7791671810736286e+01" z="0.0000000000000000e+00" h="3.1730299209743422e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.2">
+															<Position>
+																<WorldPosition x="1.2752128007591391e+01" y="1.7782878311679141e+01" z="0.0000000000000000e+00" h="3.1730320471986815e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.3">
+															<Position>
+																<WorldPosition x="1.2507551565257931e+01" y="1.7774190398123174e+01" z="0.0000000000000000e+00" h="3.1730331770733695e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.4">
+															<Position>
+																<WorldPosition x="1.2263860362197651e+01" y="1.7765600821166800e+01" z="0.0000000000000000e+00" h="3.1730340831685155e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.5">
+															<Position>
+																<WorldPosition x="1.2022960423150364e+01" y="1.7756971210490203e+01" z="0.0000000000000000e+00" h="3.1730337185900064e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.6000000000000005">
+															<Position>
+																<WorldPosition x="1.1782138235886841e+01" y="1.7748191446058012e+01" z="0.0000000000000000e+00" h="3.1730311519194507e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.7">
+															<Position>
+																<WorldPosition x="1.1538828376578524e+01" y="1.7739330000326195e+01" z="0.0000000000000000e+00" h="3.1730255299883021e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.800000000000001">
+															<Position>
+																<WorldPosition x="1.1295850675720462e+01" y="1.7730461075119539e+01" z="0.0000000000000000e+00" h="3.1730153532046219e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.9">
+															<Position>
+																<WorldPosition x="1.1051072705566872e+01" y="1.7722599111897104e+01" z="0.0000000000000000e+00" h="3.1730065122485391e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.0">
+															<Position>
+																<WorldPosition x="1.0802199098560388e+01" y="1.7714490048287985e+01" z="0.0000000000000000e+00" h="3.1729952394273795e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.1000000000000005">
+															<Position>
+																<WorldPosition x="1.0549892915616976e+01" y="1.7706776484356880e+01" z="0.0000000000000000e+00" h="3.1729823341789380e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.2">
+															<Position>
+																<WorldPosition x="1.0295190838175785e+01" y="1.7699364689631519e+01" z="0.0000000000000000e+00" h="3.1729670222660644e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.300000000000001">
+															<Position>
+																<WorldPosition x="1.0033610587709838e+01" y="1.7691974968376641e+01" z="0.0000000000000000e+00" h="3.1729467203229120e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.4">
+															<Position>
+																<WorldPosition x="9.7629824532132048e+00" y="1.7685879350011707e+01" z="0.0000000000000000e+00" h="3.1729290871190123e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.5">
+															<Position>
+																<WorldPosition x="9.4814022533578157e+00" y="1.7680204832269741e+01" z="0.0000000000000000e+00" h="3.1729137611713574e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.6000000000000005">
+															<Position>
+																<WorldPosition x="9.1867512586793048e+00" y="1.7674641923743685e+01" z="0.0000000000000000e+00" h="3.1728988014987540e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.7">
+															<Position>
+																<WorldPosition x="8.8791566331291936e+00" y="1.7669215477710402e+01" z="0.0000000000000000e+00" h="3.1728833983211300e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.800000000000001">
+															<Position>
+																<WorldPosition x="8.5572685272901019e+00" y="1.7663872069688455e+01" z="0.0000000000000000e+00" h="3.1728649479348432e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.9">
+															<Position>
+																<WorldPosition x="8.2215000516751928e+00" y="1.7660034944427238e+01" z="0.0000000000000000e+00" h="3.1728519370094759e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.0">
+															<Position>
+																<WorldPosition x="7.8706385191107087e+00" y="1.7656400293064952e+01" z="0.0000000000000000e+00" h="3.1728392615973173e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.1000000000000005">
+															<Position>
+																<WorldPosition x="7.5048338869460700e+00" y="1.7652561866033199e+01" z="0.0000000000000000e+00" h="3.1728231478504707e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.2">
+															<Position>
+																<WorldPosition x="7.1263433835981207e+00" y="1.7650383884756096e+01" z="0.0000000000000000e+00" h="3.1728129011635011e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.300000000000001">
+															<Position>
+																<WorldPosition x="6.7350979243831244e+00" y="1.7649214867582149e+01" z="0.0000000000000000e+00" h="3.1728079099578932e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.4">
+															<Position>
+																<WorldPosition x="6.3315959107864801e+00" y="1.7648770908594351e+01" z="0.0000000000000000e+00" h="3.1728076967167018e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.5">
+															<Position>
+																<WorldPosition x="5.9142054755939757e+00" y="1.7647485740304759e+01" z="0.0000000000000000e+00" h="3.1728021955931323e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.6000000000000005">
+															<Position>
+																<WorldPosition x="5.4828951328230895e+00" y="1.7646773972557202e+01" z="0.0000000000000000e+00" h="3.1727956184832475e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.7">
+															<Position>
+																<WorldPosition x="5.0390351711460513e+00" y="1.7646196456889903e+01" z="0.0000000000000000e+00" h="3.1727867848520552e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.800000000000001">
+															<Position>
+																<WorldPosition x="4.5842743533090839e+00" y="1.7645945736193781e+01" z="0.0000000000000000e+00" h="3.1727752969934291e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.9">
+															<Position>
+																<WorldPosition x="4.1177220144860964e+00" y="1.7646371582834597e+01" z="0.0000000000000000e+00" h="3.1727623354777696e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="7.0">
+															<Position>
+																<WorldPosition x="3.6414635483652269e+00" y="1.7648159190529100e+01" z="0.0000000000000000e+00" h="3.1727538222463587e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="7.1000000000000005">
+															<Position>
+																<WorldPosition x="3.1547552950364564e+00" y="1.7650544877866942e+01" z="0.0000000000000000e+00" h="3.1727480065238756e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="7.2">
+															<Position>
+																<WorldPosition x="2.6584743527663530e+00" y="1.7654049058233976e+01" z="0.0000000000000000e+00" h="3.1727464165532782e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="7.300000000000001">
+															<Position>
+																<WorldPosition x="2.1536772650368370e+00" y="1.7656753610708595e+01" z="0.0000000000000000e+00" h="3.1727406784690673e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="7.4">
+															<Position>
+																<WorldPosition x="1.6368260484326254e+00" y="1.7659432449709374e+01" z="0.0000000000000000e+00" h="3.1727322973303544e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="7.5">
+															<Position>
+																<WorldPosition x="1.1087411140462866e+00" y="1.7663275402555239e+01" z="0.0000000000000000e+00" h="3.1727311108411609e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="7.6000000000000005">
+															<Position>
+																<WorldPosition x="5.7088496282999190e-01" y="1.7668129187214678e+01" z="0.0000000000000000e+00" h="3.1727375897053984e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="7.7">
+															<Position>
+																<WorldPosition x="1.9462543655169199e-02" y="1.7671412390243169e+01" z="0.0000000000000000e+00" h="3.1727395366718252e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="7.800000000000001">
+															<Position>
+																<WorldPosition x="-5.4357990771515252e-01" y="1.7674147550617956e+01" z="0.0000000000000000e+00" h="3.1727379028742062e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="7.9">
+															<Position>
+																<WorldPosition x="-1.1173518081802971e+00" y="1.7676097172282077e+01" z="0.0000000000000000e+00" h="3.1727332656034122e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="8.0">
+															<Position>
+																<WorldPosition x="-1.6971870556070563e+00" y="1.7679209593852718e+01" z="0.0000000000000000e+00" h="3.1727315073563664e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="8.1">
+															<Position>
+																<WorldPosition x="-2.2742830818261450e+00" y="1.7681903237086466e+01" z="0.0000000000000000e+00" h="3.1727262696393512e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="8.200000000000001">
+															<Position>
+																<WorldPosition x="-2.8539372246751000e+00" y="1.7684193100074360e+01" z="0.0000000000000000e+00" h="3.1727191309654206e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="8.3">
+															<Position>
+																<WorldPosition x="-3.4361325397407687e+00" y="1.7688273789139537e+01" z="0.0000000000000000e+00" h="3.1727209316809999e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="8.4">
+															<Position>
+																<WorldPosition x="-4.0263165297811820e+00" y="1.7692700544182298e+01" z="0.0000000000000000e+00" h="3.1727296361024560e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="8.5">
+															<Position>
+																<WorldPosition x="-4.6240230884949289e+00" y="1.7696206622391198e+01" z="0.0000000000000000e+00" h="3.1727400024108676e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="8.6">
+															<Position>
+																<WorldPosition x="-5.2314556575458404e+00" y="1.7698985280082184e+01" z="0.0000000000000000e+00" h="3.1727498115202812e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="8.700000000000001">
+															<Position>
+																<WorldPosition x="-5.8455347100945776e+00" y="1.7700336665821727e+01" z="0.0000000000000000e+00" h="3.1727544258152074e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="8.8">
+															<Position>
+																<WorldPosition x="-6.4686078315194537e+00" y="1.7700516701230796e+01" z="0.0000000000000000e+00" h="3.1727536925537976e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="8.9">
+															<Position>
+																<WorldPosition x="-7.0977378283813870e+00" y="1.7700371290639399e+01" z="0.0000000000000000e+00" h="3.1727493126197763e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="9.0">
+															<Position>
+																<WorldPosition x="-7.7384019611345121e+00" y="1.7699196235943173e+01" z="0.0000000000000000e+00" h="3.1727479560022220e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+													</Polyline>
+												</Shape>
+											</Trajectory>
+											<TimeReference>
+												<Timing domainAbsoluteRelative="absolute" scale="1.0" offset="0.0" />
+											</TimeReference>
+											<TrajectoryFollowingMode followingMode="follow" />
+										</FollowTrajectoryAction>
+									</RoutingAction>
+								</PrivateAction>
+							</Action>
+							<StartTrigger>
+								<ConditionGroup>
+									<Condition name="" delay="0.0" conditionEdge="none">
+										<ByValueCondition>
+											<SimulationTimeCondition value="0.00" rule="greaterThan" />
+										</ByValueCondition>
+									</Condition>
+								</ConditionGroup>
+							</StartTrigger>
+						</Event>
+						<Event name="AddEntityEvent" priority="parallel">
+							<Action name="AddEntityAction">
+								<GlobalAction>
+									<EntityAction entityRef="A1">
+										<AddEntityAction>
+											<Position>
+												<WorldPosition x="2.6266148966489240e+01" y="1.8054570162711137e+01" z="0.0000000000000000e+00" h="3.1751490045509532e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+											</Position>
+										</AddEntityAction>
+									</EntityAction>
+								</GlobalAction>
+							</Action>
+							<StartTrigger>
+								<ConditionGroup>
+									<Condition conditionEdge="none" delay="0.0" name="AddEntityCondition">
+										<ByValueCondition>
+											<SimulationTimeCondition rule="greaterOrEqual" value="0.00" />
+										</ByValueCondition>
+									</Condition>
+								</ConditionGroup>
+							</StartTrigger>
+						</Event>
+						<Event name="DeleteEntityEvent" priority="parallel">
+							<Action name="DelEntityAction">
+								<GlobalAction>
+									<EntityAction entityRef="A1">
+										<DeleteEntityAction />
+									</EntityAction>
+								</GlobalAction>
+							</Action>
+							<StartTrigger>
+								<ConditionGroup>
+									<Condition conditionEdge="none" delay="9.0" name="DelEntityCondition">
+										<ByValueCondition>
+											<SimulationTimeCondition rule="greaterOrEqual" value="0.00" />
+										</ByValueCondition>
+									</Condition>
+								</ConditionGroup>
+							</StartTrigger>
+						</Event>
+					</Maneuver>
+				</ManeuverGroup>
+				<StartTrigger>
+					<ConditionGroup>
+						<Condition name="" delay="0" conditionEdge="rising">
+							<ByValueCondition>
+								<SimulationTimeCondition value="0" rule="greaterThan" />
+							</ByValueCondition>
+						</Condition>
+					</ConditionGroup>
+				</StartTrigger>
+			</Act>
+			<Act name="Act_A2">
+				<ManeuverGroup maximumExecutionCount="1" name="Squence_A2">
+					<Actors selectTriggeringEntities="false">
+						<EntityRef entityRef="A2" />
+					</Actors>
+					<Maneuver name="Maneuver1">
+						<Event name="Event1" priority="overwrite">
+							<Action name="Action1">
+								<PrivateAction>
+									<RoutingAction>
+										<FollowTrajectoryAction>
+											<Trajectory name="Trajectory_A2" closed="false">
+												<Shape>
+													<Polyline>
+														<Vertex time="0.0">
+															<Position>
+																<WorldPosition x="1.4410910606189240e+00" y="1.1604232993339252e+01" z="0.0000000000000000e+00" h="3.1252905277112102e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.1">
+															<Position>
+																<WorldPosition x="2.0700600840013337e+00" y="1.1610655306489528e+01" z="0.0000000000000000e+00" h="3.1263314546113502e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.2">
+															<Position>
+																<WorldPosition x="2.7086616128728167e+00" y="1.1618424481353264e+01" z="0.0000000000000000e+00" h="3.1271155461768299e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.30000000000000004">
+															<Position>
+																<WorldPosition x="3.3567970580761330e+00" y="1.1627204620428124e+01" z="0.0000000000000000e+00" h="3.1278118069900003e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.4">
+															<Position>
+																<WorldPosition x="4.0153211047567652e+00" y="1.1636784654252928e+01" z="0.0000000000000000e+00" h="3.1286957607088099e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.5">
+															<Position>
+																<WorldPosition x="4.6879562231341687e+00" y="1.1647001065302581e+01" z="0.0000000000000000e+00" h="3.1297230652792399e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.6000000000000001">
+															<Position>
+																<WorldPosition x="5.3735375247285484e+00" y="1.1658985452130199e+01" z="0.0000000000000000e+00" h="3.1305301494077599e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.7000000000000001">
+															<Position>
+																<WorldPosition x="6.0714179507100168e+00" y="1.1671935851601935e+01" z="0.0000000000000000e+00" h="3.1314511933930901e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.8">
+															<Position>
+																<WorldPosition x="6.7779513484133744e+00" y="1.1685649994280691e+01" z="0.0000000000000000e+00" h="3.1326723224956603e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.9">
+															<Position>
+																<WorldPosition x="7.4929893212646714e+00" y="1.1700346650478060e+01" z="0.0000000000000000e+00" h="3.1342341837201297e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.0">
+															<Position>
+																<WorldPosition x="8.2174961729450811e+00" y="1.1716399350493059e+01" z="0.0000000000000000e+00" h="3.1361284998087303e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.1">
+															<Position>
+																<WorldPosition x="8.9532351960167738e+00" y="1.1733863997235844e+01" z="0.0000000000000000e+00" h="3.1383765580331603e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.2000000000000002">
+															<Position>
+																<WorldPosition x="9.7014765542749064e+00" y="1.1753102374993423e+01" z="0.0000000000000000e+00" h="3.1407273329438198e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.3">
+															<Position>
+																<WorldPosition x="1.0462022634081132e+01" y="1.1774702552627623e+01" z="0.0000000000000000e+00" h="3.1430794255006798e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.4000000000000001">
+															<Position>
+																<WorldPosition x="1.1233335537290376e+01" y="1.1797954060322104e+01" z="0.0000000000000000e+00" h="3.1453889115996697e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.5">
+															<Position>
+																<WorldPosition x="1.2012637566266882e+01" y="1.1823448162800929e+01" z="0.0000000000000000e+00" h="3.1472516388051097e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.6">
+															<Position>
+																<WorldPosition x="1.2800280209119270e+01" y="1.1851109100247818e+01" z="0.0000000000000000e+00" h="3.1488955940302800e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.7000000000000002">
+															<Position>
+																<WorldPosition x="1.3598707353621830e+01" y="1.1880314847353921e+01" z="0.0000000000000000e+00" h="3.1514992969791503e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.8">
+															<Position>
+																<WorldPosition x="1.4405161572234791e+01" y="1.1910039734061440e+01" z="0.0000000000000000e+00" h="3.1555742633255002e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.9000000000000001">
+															<Position>
+																<WorldPosition x="1.5218617533286858e+01" y="1.1941984063770896e+01" z="0.0000000000000000e+00" h="3.1598557874130899e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.0">
+															<Position>
+																<WorldPosition x="1.6040472212610435e+01" y="1.1977853342140692e+01" z="0.0000000000000000e+00" h="3.1632494458715903e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.1">
+															<Position>
+																<WorldPosition x="1.6871091530840438e+01" y="1.2016703517729711e+01" z="0.0000000000000000e+00" h="3.1657699081025698e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.2">
+															<Position>
+																<WorldPosition x="1.7709046699628363e+01" y="1.2058189538681120e+01" z="0.0000000000000000e+00" h="3.1680821032017199e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.3000000000000003">
+															<Position>
+																<WorldPosition x="1.8551773937985388e+01" y="1.2100749764210130e+01" z="0.0000000000000000e+00" h="3.1703710722489002e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.4000000000000004">
+															<Position>
+																<WorldPosition x="1.9404122294976361e+01" y="1.2145749002861542e+01" z="0.0000000000000000e+00" h="3.1720863500574001e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.5">
+															<Position>
+																<WorldPosition x="2.0268046296385752e+01" y="1.2192379705288248e+01" z="0.0000000000000000e+00" h="3.1735792542707003e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.6">
+															<Position>
+																<WorldPosition x="2.1144249296278609e+01" y="1.2240653656268146e+01" z="0.0000000000000000e+00" h="3.1754617292153203e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.7">
+															<Position>
+																<WorldPosition x="2.2030476885542249e+01" y="1.2289761460348505e+01" z="0.0000000000000000e+00" h="3.1783452963504800e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.8000000000000003">
+															<Position>
+																<WorldPosition x="2.2927201504833576e+01" y="1.2340192843426015e+01" z="0.0000000000000000e+00" h="3.1814148713364798e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.9000000000000004">
+															<Position>
+																<WorldPosition x="2.3830307825898835e+01" y="1.2393208776149306e+01" z="0.0000000000000000e+00" h="3.1842996359689298e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.0">
+															<Position>
+																<WorldPosition x="2.4744492761895081e+01" y="1.2448365216257573e+01" z="0.0000000000000000e+00" h="3.1869411595784498e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.1">
+															<Position>
+																<WorldPosition x="2.5668509765251439e+01" y="1.2505029766369580e+01" z="0.0000000000000000e+00" h="3.1898183860815200e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.2">
+															<Position>
+																<WorldPosition x="2.6602699057474407e+01" y="1.2563807872409711e+01" z="0.0000000000000000e+00" h="3.1923188499711597e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.3000000000000003">
+															<Position>
+																<WorldPosition x="2.7548735039392891e+01" y="1.2624668343439204e+01" z="0.0000000000000000e+00" h="3.1938664400185397e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.4000000000000004">
+															<Position>
+																<WorldPosition x="2.8505784987243985e+01" y="1.2687362544821024e+01" z="0.0000000000000000e+00" h="3.1943636916902100e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.5">
+															<Position>
+																<WorldPosition x="2.9472990951693987e+01" y="1.2751315167369723e+01" z="0.0000000000000000e+00" h="3.1943711985100799e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.6">
+															<Position>
+																<WorldPosition x="3.0446963069439931e+01" y="1.2815197514111386e+01" z="0.0000000000000000e+00" h="3.1950336461527999e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.7">
+															<Position>
+																<WorldPosition x="3.1428029778471920e+01" y="1.2878728333628992e+01" z="0.0000000000000000e+00" h="3.1957522503027601e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.8000000000000003">
+															<Position>
+																<WorldPosition x="3.2418128495583886e+01" y="1.2943237236095030e+01" z="0.0000000000000000e+00" h="3.1960048633878101e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.9000000000000004">
+															<Position>
+																<WorldPosition x="3.3417461007857867e+01" y="1.3007781386984783e+01" z="0.0000000000000000e+00" h="3.1950473485275403e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.0">
+															<Position>
+																<WorldPosition x="3.4422502050868907e+01" y="1.3073311836476710e+01" z="0.0000000000000000e+00" h="3.1932401671827801e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.1000000000000005">
+															<Position>
+																<WorldPosition x="3.5435694415233108e+01" y="1.3137456859026829e+01" z="0.0000000000000000e+00" h="3.1902199610364800e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.2">
+															<Position>
+																<WorldPosition x="3.6458754068999681e+01" y="1.3201074368905523e+01" z="0.0000000000000000e+00" h="3.1863827850458902e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.3">
+															<Position>
+																<WorldPosition x="3.7494238409800097e+01" y="1.3262765165526424e+01" z="0.0000000000000000e+00" h="3.1829140001019197e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.4">
+															<Position>
+																<WorldPosition x="3.8541686484422520e+01" y="1.3321997695373184e+01" z="0.0000000000000000e+00" h="3.1802610295237198e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.5">
+															<Position>
+																<WorldPosition x="3.9596617865301290e+01" y="1.3379609860813982e+01" z="0.0000000000000000e+00" h="3.1783357435545903e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.6000000000000005">
+															<Position>
+																<WorldPosition x="4.0656843930619374e+01" y="1.3435817257948749e+01" z="0.0000000000000000e+00" h="3.1770945979025599e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.7">
+															<Position>
+																<WorldPosition x="4.1722186532873579e+01" y="1.3490549736342446e+01" z="0.0000000000000000e+00" h="3.1758348293534501e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.800000000000001">
+															<Position>
+																<WorldPosition x="4.2791203101451103e+01" y="1.3544943552193512e+01" z="0.0000000000000000e+00" h="3.1740046850722299e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.9">
+															<Position>
+																<WorldPosition x="4.3869002598359387e+01" y="1.3598719248235971e+01" z="0.0000000000000000e+00" h="3.1716327914130100e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.0">
+															<Position>
+																<WorldPosition x="4.4957307551897479e+01" y="1.3651345948020140e+01" z="0.0000000000000000e+00" h="3.1693986245631897e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.1000000000000005">
+															<Position>
+																<WorldPosition x="4.6056769912498787e+01" y="1.3702820823705514e+01" z="0.0000000000000000e+00" h="3.1669698330806802e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.2">
+															<Position>
+																<WorldPosition x="4.7167646972939963e+01" y="1.3753625736393404e+01" z="0.0000000000000000e+00" h="3.1643139658648199e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.300000000000001">
+															<Position>
+																<WorldPosition x="4.8287135357366047e+01" y="1.3802963530934546e+01" z="0.0000000000000000e+00" h="3.1614332131888599e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.4">
+															<Position>
+																<WorldPosition x="4.9414666252140663e+01" y="1.3851189266166733e+01" z="0.0000000000000000e+00" h="3.1581385196055599e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.5">
+															<Position>
+																<WorldPosition x="5.0544288834965997e+01" y="1.3897591576124244e+01" z="0.0000000000000000e+00" h="3.1545444295427903e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.6000000000000005">
+															<Position>
+																<WorldPosition x="5.1675557649473632e+01" y="1.3942077555140283e+01" z="0.0000000000000000e+00" h="3.1494053185466601e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.7">
+															<Position>
+																<WorldPosition x="5.2806948619594138e+01" y="1.3984958158588841e+01" z="0.0000000000000000e+00" h="3.1428284928557801e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+													</Polyline>
+												</Shape>
+											</Trajectory>
+											<TimeReference>
+												<Timing domainAbsoluteRelative="absolute" scale="1.0" offset="0.0" />
+											</TimeReference>
+											<TrajectoryFollowingMode followingMode="follow" />
+										</FollowTrajectoryAction>
+									</RoutingAction>
+								</PrivateAction>
+							</Action>
+							<StartTrigger>
+								<ConditionGroup>
+									<Condition name="" delay="0.0" conditionEdge="none">
+										<ByValueCondition>
+											<SimulationTimeCondition value="0.00" rule="greaterThan" />
+										</ByValueCondition>
+									</Condition>
+								</ConditionGroup>
+							</StartTrigger>
+						</Event>
+						<Event name="AddEntityEvent" priority="parallel">
+							<Action name="AddEntityAction">
+								<GlobalAction>
+									<EntityAction entityRef="A2">
+										<AddEntityAction>
+											<Position>
+												<WorldPosition x="1.4410910606189240e+00" y="1.1604232993339252e+01" z="0.0000000000000000e+00" h="3.1252905277112102e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+											</Position>
+										</AddEntityAction>
+									</EntityAction>
+								</GlobalAction>
+							</Action>
+							<StartTrigger>
+								<ConditionGroup>
+									<Condition conditionEdge="none" delay="0.0" name="AddEntityCondition">
+										<ByValueCondition>
+											<SimulationTimeCondition rule="greaterOrEqual" value="0.00" />
+										</ByValueCondition>
+									</Condition>
+								</ConditionGroup>
+							</StartTrigger>
+						</Event>
+						<Event name="DeleteEntityEvent" priority="parallel">
+							<Action name="DelEntityAction">
+								<GlobalAction>
+									<EntityAction entityRef="A2">
+										<DeleteEntityAction />
+									</EntityAction>
+								</GlobalAction>
+							</Action>
+							<StartTrigger>
+								<ConditionGroup>
+									<Condition conditionEdge="none" delay="5.7" name="DelEntityCondition">
+										<ByValueCondition>
+											<SimulationTimeCondition rule="greaterOrEqual" value="0.00" />
+										</ByValueCondition>
+									</Condition>
+								</ConditionGroup>
+							</StartTrigger>
+						</Event>
+					</Maneuver>
+				</ManeuverGroup>
+				<StartTrigger>
+					<ConditionGroup>
+						<Condition name="" delay="0" conditionEdge="rising">
+							<ByValueCondition>
+								<SimulationTimeCondition value="0" rule="greaterThan" />
+							</ByValueCondition>
+						</Condition>
+					</ConditionGroup>
+				</StartTrigger>
+			</Act>
+			<Act name="Act_A3">
+				<ManeuverGroup maximumExecutionCount="1" name="Squence_A3">
+					<Actors selectTriggeringEntities="false">
+						<EntityRef entityRef="A3" />
+					</Actors>
+					<Maneuver name="Maneuver1">
+						<Event name="Event1" priority="overwrite">
+							<Action name="Action1">
+								<PrivateAction>
+									<RoutingAction>
+										<FollowTrajectoryAction>
+											<Trajectory name="Trajectory_A3" closed="false">
+												<Shape>
+													<Polyline>
+														<Vertex time="0.0">
+															<Position>
+																<WorldPosition x="-4.4135707432348470e+00" y="1.5101481974614131e+01" z="0.0000000000000000e+00" h="1.8628928760623439e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.1">
+															<Position>
+																<WorldPosition x="-4.0950382989601124e+00" y="1.5171352892328416e+01" z="0.0000000000000000e+00" h="2.0962615317769359e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.2">
+															<Position>
+																<WorldPosition x="-3.7644991107929728e+00" y="1.5251580668115009e+01" z="0.0000000000000000e+00" h="2.3540103041281760e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.30000000000000004">
+															<Position>
+																<WorldPosition x="-3.4262686200033934e+00" y="1.5341821830480486e+01" z="0.0000000000000000e+00" h="2.6488343831023642e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.4">
+															<Position>
+																<WorldPosition x="-3.0824404981510880e+00" y="1.5443527336007676e+01" z="0.0000000000000000e+00" h="2.9522950336686832e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.5">
+															<Position>
+																<WorldPosition x="-2.7272315892137127e+00" y="1.5565590811318412e+01" z="0.0000000000000000e+00" h="3.2056488876767181e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.6000000000000001">
+															<Position>
+																<WorldPosition x="-2.3825926496092427e+00" y="1.5700431254186968e+01" z="0.0000000000000000e+00" h="3.4090237508350568e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.7000000000000001">
+															<Position>
+																<WorldPosition x="-2.0389845620552780e+00" y="1.5843033573764190e+01" z="0.0000000000000000e+00" h="3.5758788065551173e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.8">
+															<Position>
+																<WorldPosition x="-1.7265241846744597e+00" y="1.5980682048641411e+01" z="0.0000000000000000e+00" h="3.6970763181243399e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.9">
+															<Position>
+																<WorldPosition x="-1.4186550521325940e+00" y="1.6118663710600995e+01" z="0.0000000000000000e+00" h="3.8110679389837920e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.0">
+															<Position>
+																<WorldPosition x="-1.1108723462357204e+00" y="1.6267835247496357e+01" z="0.0000000000000000e+00" h="3.8961893035784850e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.1">
+															<Position>
+																<WorldPosition x="-8.0212015447865315e-01" y="1.6420598057885872e+01" z="0.0000000000000000e+00" h="4.0224992117021041e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.2000000000000002">
+															<Position>
+																<WorldPosition x="-4.7848028414450400e-01" y="1.6576449497676599e+01" z="0.0000000000000000e+00" h="4.2072743781238597e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.3">
+															<Position>
+																<WorldPosition x="-1.4790469794808900e-01" y="1.6739735341566941e+01" z="0.0000000000000000e+00" h="4.4182583853245000e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.4000000000000001">
+															<Position>
+																<WorldPosition x="1.8613226095720711e-01" y="1.6911369354525526e+01" z="0.0000000000000000e+00" h="4.6523290871855272e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.5">
+															<Position>
+																<WorldPosition x="5.2204139203243027e-01" y="1.7090477962132663e+01" z="0.0000000000000000e+00" h="4.9023726768349690e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.6">
+															<Position>
+																<WorldPosition x="8.5462491405622176e-01" y="1.7275557497797546e+01" z="0.0000000000000000e+00" h="5.1245503359435929e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.7000000000000002">
+															<Position>
+																<WorldPosition x="1.1781305249188878e+00" y="1.7470329390567993e+01" z="0.0000000000000000e+00" h="5.2929093021240492e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.8">
+															<Position>
+																<WorldPosition x="1.4936541395559040e+00" y="1.7667108707110081e+01" z="0.0000000000000000e+00" h="5.4510211804091679e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.9000000000000001">
+															<Position>
+																<WorldPosition x="1.8023502437917429e+00" y="1.7863835434825120e+01" z="0.0000000000000000e+00" h="5.6117395424030347e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.0">
+															<Position>
+																<WorldPosition x="2.1082204509601623e+00" y="1.8061202665934800e+01" z="0.0000000000000000e+00" h="5.7769290837680187e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.1">
+															<Position>
+																<WorldPosition x="2.4125869591947096e+00" y="1.8260708090491079e+01" z="0.0000000000000000e+00" h="5.9433209396286391e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.2">
+															<Position>
+																<WorldPosition x="2.7166255573877831e+00" y="1.8467361391789265e+01" z="0.0000000000000000e+00" h="6.1064899773107728e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.3000000000000003">
+															<Position>
+																<WorldPosition x="3.0180051166784652e+00" y="1.8679164439204271e+01" z="0.0000000000000000e+00" h="6.2605331663009356e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.4000000000000004">
+															<Position>
+																<WorldPosition x="3.3181800572088811e+00" y="1.8897304928773284e+01" z="0.0000000000000000e+00" h="6.3967269443114683e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.5">
+															<Position>
+																<WorldPosition x="3.6167265254505838e+00" y="1.9121826068893743e+01" z="0.0000000000000000e+00" h="6.5078838739847267e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.6">
+															<Position>
+																<WorldPosition x="3.9122146308546601e+00" y="1.9352916746658039e+01" z="0.0000000000000000e+00" h="6.5978714230105096e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.7">
+															<Position>
+																<WorldPosition x="4.2059234737302313e+00" y="1.9589363971341463e+01" z="0.0000000000000000e+00" h="6.7111511313038785e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.8000000000000003">
+															<Position>
+																<WorldPosition x="4.5013103798538356e+00" y="1.9829854240928480e+01" z="0.0000000000000000e+00" h="6.8505041484443208e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="2.9000000000000004">
+															<Position>
+																<WorldPosition x="4.8052073932998773e+00" y="2.0086631561250066e+01" z="0.0000000000000000e+00" h="6.9688952606363619e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.0">
+															<Position>
+																<WorldPosition x="5.1101554033064929e+00" y="2.0355149453821891e+01" z="0.0000000000000000e+00" h="7.0624738447328950e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.1">
+															<Position>
+																<WorldPosition x="5.4145638990985594e+00" y="2.0632209367720211e+01" z="0.0000000000000000e+00" h="7.1644656818614427e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.2">
+															<Position>
+																<WorldPosition x="5.7249572417506185e+00" y="2.0916444011524995e+01" z="0.0000000000000000e+00" h="7.2816294737182274e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.3000000000000003">
+															<Position>
+																<WorldPosition x="6.0381954640841347e+00" y="2.1214782114699400e+01" z="0.0000000000000000e+00" h="7.3808969131842861e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.4000000000000004">
+															<Position>
+																<WorldPosition x="6.3494499180246686e+00" y="2.1525318141745188e+01" z="0.0000000000000000e+00" h="7.4931996478986340e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.5">
+															<Position>
+																<WorldPosition x="6.6614944076968206e+00" y="2.1838646043850176e+01" z="0.0000000000000000e+00" h="7.6222327018677105e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.6">
+															<Position>
+																<WorldPosition x="6.9729101869693615e+00" y="2.2161802350273085e+01" z="0.0000000000000000e+00" h="7.7363316968055096e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.7">
+															<Position>
+																<WorldPosition x="7.2770891465958538e+00" y="2.2490273451704230e+01" z="0.0000000000000000e+00" h="7.8790856937601716e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.8000000000000003">
+															<Position>
+																<WorldPosition x="7.5861874936596241e+00" y="2.2819787731127921e+01" z="0.0000000000000000e+00" h="8.0646733589831310e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="3.9000000000000004">
+															<Position>
+																<WorldPosition x="7.8951201377189317e+00" y="2.3161495575390628e+01" z="0.0000000000000000e+00" h="8.2579042589007678e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.0">
+															<Position>
+																<WorldPosition x="8.2036082759386790e+00" y="2.3514842863967591e+01" z="0.0000000000000000e+00" h="8.4563588650440702e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.1000000000000005">
+															<Position>
+																<WorldPosition x="8.5120366007172965e+00" y="2.3880021736919090e+01" z="0.0000000000000000e+00" h="8.6668021229422632e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.2">
+															<Position>
+																<WorldPosition x="8.8206996406018803e+00" y="2.4259435091883983e+01" z="0.0000000000000000e+00" h="8.8874843137415505e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.3">
+															<Position>
+																<WorldPosition x="9.1305252154157017e+00" y="2.4655062962848373e+01" z="0.0000000000000000e+00" h="9.0736056146732136e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.4">
+															<Position>
+																<WorldPosition x="9.4237246987333805e+00" y="2.5060807274865439e+01" z="0.0000000000000000e+00" h="9.2740711413642563e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.5">
+															<Position>
+																<WorldPosition x="9.7187350735553473e+00" y="2.5467965419346399e+01" z="0.0000000000000000e+00" h="9.4722376869999680e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.6000000000000005">
+															<Position>
+																<WorldPosition x="1.0009081148471187e+01" y="2.5897644528717532e+01" z="0.0000000000000000e+00" h="9.6390273096019541e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.7">
+															<Position>
+																<WorldPosition x="1.0295036686132566e+01" y="2.6337130326520359e+01" z="0.0000000000000000e+00" h="9.8007348024672780e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.800000000000001">
+															<Position>
+																<WorldPosition x="1.0577622909969907e+01" y="2.6783296844714531e+01" z="0.0000000000000000e+00" h="9.9655069012214159e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="4.9">
+															<Position>
+																<WorldPosition x="1.0855643786776891e+01" y="2.7235304381651936e+01" z="0.0000000000000000e+00" h="1.0134042247809840e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.0">
+															<Position>
+																<WorldPosition x="1.1129149920038351e+01" y="2.7694257925889385e+01" z="0.0000000000000000e+00" h="1.0305049475361474e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.1000000000000005">
+															<Position>
+																<WorldPosition x="1.1398684508342280e+01" y="2.8161883516977820e+01" z="0.0000000000000000e+00" h="1.0476753880871532e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.2">
+															<Position>
+																<WorldPosition x="1.1661386276015616e+01" y="2.8636976450450899e+01" z="0.0000000000000000e+00" h="1.0646293468407599e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.300000000000001">
+															<Position>
+																<WorldPosition x="1.1917095793371493e+01" y="2.9119855450713874e+01" z="0.0000000000000000e+00" h="1.0808684140863505e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.4">
+															<Position>
+																<WorldPosition x="1.2166244572293650e+01" y="2.9611645971137506e+01" z="0.0000000000000000e+00" h="1.0956177678634651e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.5">
+															<Position>
+																<WorldPosition x="1.2407349847475812e+01" y="3.0108982016321491e+01" z="0.0000000000000000e+00" h="1.1083455646263414e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.6000000000000005">
+															<Position>
+																<WorldPosition x="1.2638521177737230e+01" y="3.0610572830875768e+01" z="0.0000000000000000e+00" h="1.1208140435872380e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.7">
+															<Position>
+																<WorldPosition x="1.2860439140386930e+01" y="3.1117328861106184e+01" z="0.0000000000000000e+00" h="1.1432722117870715e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.800000000000001">
+															<Position>
+																<WorldPosition x="1.3083430141346229e+01" y="3.1630795819527869e+01" z="0.0000000000000000e+00" h="1.1783105285927096e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="5.9">
+															<Position>
+																<WorldPosition x="1.3293740633183289e+01" y="3.2151590350314102e+01" z="0.0000000000000000e+00" h="1.2171762040138048e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.0">
+															<Position>
+																<WorldPosition x="1.3482847959548026e+01" y="3.2694111246631429e+01" z="0.0000000000000000e+00" h="1.2535086215636719e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.1000000000000005">
+															<Position>
+																<WorldPosition x="1.3647649649783199e+01" y="3.3249309544608643e+01" z="0.0000000000000000e+00" h="1.2845002873912708e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.2">
+															<Position>
+																<WorldPosition x="1.3790618855052603e+01" y="3.3813155066263839e+01" z="0.0000000000000000e+00" h="1.3072450895073775e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.300000000000001">
+															<Position>
+																<WorldPosition x="1.3912391734381618e+01" y="3.4377694616595171e+01" z="0.0000000000000000e+00" h="1.3214298014732511e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.4">
+															<Position>
+																<WorldPosition x="1.4016691256616266e+01" y="3.4942031770306777e+01" z="0.0000000000000000e+00" h="1.3427237064122437e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.5">
+															<Position>
+																<WorldPosition x="1.4129641726265120e+01" y="3.5520946456882491e+01" z="0.0000000000000000e+00" h="1.3775157235657152e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.6000000000000005">
+															<Position>
+																<WorldPosition x="1.4232477601935647e+01" y="3.6100865222168018e+01" z="0.0000000000000000e+00" h="1.4078325084808276e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.7">
+															<Position>
+																<WorldPosition x="1.4304536008460218e+01" y="3.6692658193946727e+01" z="0.0000000000000000e+00" h="1.4339763820517244e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="6.800000000000001">
+															<Position>
+																<WorldPosition x="1.4368355169033450e+01" y="3.7287718136198698e+01" z="0.0000000000000000e+00" h="1.4572766417511509e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+													</Polyline>
+												</Shape>
+											</Trajectory>
+											<TimeReference>
+												<Timing domainAbsoluteRelative="absolute" scale="1.0" offset="0.0" />
+											</TimeReference>
+											<TrajectoryFollowingMode followingMode="follow" />
+										</FollowTrajectoryAction>
+									</RoutingAction>
+								</PrivateAction>
+							</Action>
+							<StartTrigger>
+								<ConditionGroup>
+									<Condition name="" delay="0.0" conditionEdge="none">
+										<ByValueCondition>
+											<SimulationTimeCondition value="0.00" rule="greaterThan" />
+										</ByValueCondition>
+									</Condition>
+								</ConditionGroup>
+							</StartTrigger>
+						</Event>
+						<Event name="AddEntityEvent" priority="parallel">
+							<Action name="AddEntityAction">
+								<GlobalAction>
+									<EntityAction entityRef="A3">
+										<AddEntityAction>
+											<Position>
+												<WorldPosition x="-4.4135707432348470e+00" y="1.5101481974614131e+01" z="0.0000000000000000e+00" h="1.8628928760623439e-01" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+											</Position>
+										</AddEntityAction>
+									</EntityAction>
+								</GlobalAction>
+							</Action>
+							<StartTrigger>
+								<ConditionGroup>
+									<Condition conditionEdge="none" delay="0.0" name="AddEntityCondition">
+										<ByValueCondition>
+											<SimulationTimeCondition rule="greaterOrEqual" value="0.00" />
+										</ByValueCondition>
+									</Condition>
+								</ConditionGroup>
+							</StartTrigger>
+						</Event>
+						<Event name="DeleteEntityEvent" priority="parallel">
+							<Action name="DelEntityAction">
+								<GlobalAction>
+									<EntityAction entityRef="A3">
+										<DeleteEntityAction />
+									</EntityAction>
+								</GlobalAction>
+							</Action>
+							<StartTrigger>
+								<ConditionGroup>
+									<Condition conditionEdge="none" delay="6.800000000000001" name="DelEntityCondition">
+										<ByValueCondition>
+											<SimulationTimeCondition rule="greaterOrEqual" value="0.00" />
+										</ByValueCondition>
+									</Condition>
+								</ConditionGroup>
+							</StartTrigger>
+						</Event>
+					</Maneuver>
+				</ManeuverGroup>
+				<StartTrigger>
+					<ConditionGroup>
+						<Condition name="" delay="0" conditionEdge="rising">
+							<ByValueCondition>
+								<SimulationTimeCondition value="0" rule="greaterThan" />
+							</ByValueCondition>
+						</Condition>
+					</ConditionGroup>
+				</StartTrigger>
+			</Act>
+		</Story>
+		<StopTrigger>
+			<ConditionGroup>
+				<Condition name="stop" delay="0" conditionEdge="rising">
+					<ByValueCondition>
+						<SimulationTimeCondition value="9.225000000000001" rule="greaterThan" />
+					</ByValueCondition>
+				</Condition>
+			</ConditionGroup>
+		</StopTrigger>
+	</Storyboard>
+</OpenSCENARIO>
