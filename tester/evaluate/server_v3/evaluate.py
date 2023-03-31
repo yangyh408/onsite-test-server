@@ -200,7 +200,7 @@ def write_answerSheet(file_path,recording_path,start_destpath,scenario):
        if x_ego[0]<x_ego[1]: #下行方向
         for t in range(0,np.shape(vx_egodata)[0]):
            distance = []
-           for i in range(0,num_nonego-1):
+           for i in range(0,num_nonego):
               distance.append(nonego[t][7*i]-x_ego[t])
               if distance[i]<0 or laneid[t]!=nonego[t][7*num_nonego+i]:
                 distance[i]=9999
@@ -230,7 +230,7 @@ def write_answerSheet(file_path,recording_path,start_destpath,scenario):
        else: #上行方向
         for t in range(0, np.shape(vx_egodata)[0] ):
             distance = []
-            for i in range(0, num_nonego - 1):
+            for i in range(0, num_nonego):
                 distance.append(-nonego[t][7 * i] + x_ego[t])
                 if distance[i] < 0 or laneid[t]!=nonego[t][7*num_nonego+i]:
                     distance[i] = 9999
@@ -313,10 +313,11 @@ def write_answerSheet(file_path,recording_path,start_destpath,scenario):
     # print(answersheet)
     return answersheet
 
-def Evaluation(list_HAV,start_destpath,scenario,area=5,safety=50,efficiency=30,comfort=20,dt=0.04,output_type='details'):
+def Evaluation(list_HAV,start_destpath,scenario,area=0,safety=50,efficiency=30,comfort=20,dt=0.04,output_type='details'):
     #读取起终点
     start=0
     destination=0
+    lane=0
     start_dest=pd.read_csv(start_destpath)
     start_dest=np.array(start_dest)
     num_scenario=np.shape(start_dest)[0]
@@ -326,6 +327,7 @@ def Evaluation(list_HAV,start_destpath,scenario,area=5,safety=50,efficiency=30,c
        if start_dest[i][0]==str(scenario):
            start=start_dest[i][2]
            destination=start_dest[i][3]
+           lane=start_dest[i][5]
     if start < destination:
         dest = destination - area  # 设置终点范围
     else:
@@ -366,8 +368,9 @@ def Evaluation(list_HAV,start_destpath,scenario,area=5,safety=50,efficiency=30,c
         List_HAVlane = List_HAV[:, 13].tolist()  # 驶出行车道扣分
         lane999_num = List_HAVlane.count(-999)
         if lane999_num > 0:
-            lane_ornot = 1
             score_safe = score_safe - 50*lane999_num/np.shape(List_HAV)[0]
+        out_lane_rate=lane999_num/np.shape(List_HAV)[0]
+        run_red=0
 
         #驶入对向车道扣分
         if lanenum==3:
@@ -401,6 +404,7 @@ def Evaluation(list_HAV,start_destpath,scenario,area=5,safety=50,efficiency=30,c
         # if np.shape(lanerror)[0]>0:
         #     print("驶入对向车道")
         score_safe=score_safe-25*np.shape(lanerror)[0]/np.shape(List_HAV)[0]
+        oppo_lane_rate=np.shape(lanerror)[0]/np.shape(List_HAV)[0]
         score_safe = min(50, score_safe)
         score_safe = max(0, score_safe)
 
@@ -414,26 +418,32 @@ def Evaluation(list_HAV,start_destpath,scenario,area=5,safety=50,efficiency=30,c
     time_cost = distance_HAV /33.33
 
     if start > dest:
-        if dest_HAV > dest:
+        if dest_HAV< dest and List_HAV[-1, 13]==lane:
+            done_ornot = 0
+            distance_todest = 0
+            score_efficiency1 = 15
+        else :
             done_ornot = 1
             distance_todest = dest_HAV - dest
-            score_efficiency1 = min(10, 10 * distance_HAV / distance_tar)
-        else:
+            #score_efficiency1 = min(15, 15 * distance_HAV / distance_tar)
+            score_efficiency1 =0
+
+    else:
+        if dest_HAV > dest and List_HAV[-1, 13]==lane:
+            score_efficiency1 = 15
             done_ornot = 0
             distance_todest = 0
-            score_efficiency1 = 10
-    else:
-        if dest_HAV < dest:
+
+        else:
             done_ornot = 1
             distance_todest = dest - dest_HAV
-            score_efficiency1 = min(10, 10 * distance_HAV / distance_tar)
-        else:
-            score_efficiency1 = 10
-            done_ornot = 0
-            distance_todest = 0
+            #score_efficiency1 = min(15, 15 * distance_HAV / distance_tar)
+            score_efficiency1 = 0
         # print("距离：",distance_todest)
+
+
     time_cost_HAV = np.shape(HAV)[0] * dt
-    score_efficiency2 = min(20, time_cost / time_cost_HAV * efficiency)
+    score_efficiency2 = min(15, time_cost / time_cost_HAV * 15)
     score_efficiency = min(efficiency, score_efficiency1 + score_efficiency2)
     mean_vy = abs(sum(List_HAV[:, 5]) / len(List_HAV[:, 5]))
 
@@ -507,14 +517,15 @@ def Evaluation(list_HAV,start_destpath,scenario,area=5,safety=50,efficiency=30,c
         mean_DDECy = sum(List_HAV[List_HAV[:, 10] < 0, 10]) / len(List_HAV[List_HAV[:, 10] < 0, 10])
     else:
         mean_DDECy = 0
-
+    turn_a=0
     #分数输出
     if output_type == 'default':
         score = score_safe + score_efficiency + score_comfort
         return ([score,score_safe,score_efficiency,score_comfort])
     elif output_type == 'details':
-        return ( [score_safe + score_efficiency + score_comfort, score_safe, score_efficiency, score_comfort,lane_ornot,done_ornot,distance_todest,mean_TTC,mean_vy,\
-                mean_ACCx,mean_DECx,mean_ACCy,mean_DECy,mean_AACCx,mean_DDECx,mean_AACCy,mean_DDECy])
+        return ( [score_safe + score_efficiency + score_comfort, score_safe, score_efficiency, score_comfort,mean_TTC,oppo_lane_rate,out_lane_rate,run_red,\
+                  done_ornot,mean_vy,distance_todest,\
+                mean_ACCy,mean_DECy,mean_ACCx,mean_DECx,mean_AACCy,mean_DDECy,mean_AACCx,mean_DDECx,turn_a])
     else:
         raise AttributeError("output_type do not accept!")
 
@@ -544,20 +555,25 @@ class Evaluator:
             list_HAV = answersheet.values
             list_HAV = np.array(list_HAV)
             list_HAV = list_HAV.astype(np.float64)
-            score = Evaluation(list_HAV,start_destpath,scenario,area=5,safety=50,efficiency=30,comfort=20,dt=0.04,output_type=output_type)
+            score = Evaluation(list_HAV,start_destpath,scenario,area=0,safety=50,efficiency=30,comfort=20,dt=0.04,output_type=output_type)
             # print('score', score)
             all_score.append(score)
             all_scenarios.append(scenario)
 
         if output_type == 'default':
-            return np.array(all_score)
+            return all_scenarios,np.array(all_score)
         elif output_type == 'details':
             return all_scenarios, np.array(all_score)
 
 if __name__ == '__main__':
-     eva = Evaluator(r"C:\Users\Administrator\Desktop\实验\outputs_v2","./database")
-     score = eva.evaluate()
+     eva = Evaluator(r"C:\Users\Administrator\Desktop\demo\demo_lattice2\onsite_test\outputs","./database")
+     names,score = eva.evaluate()
      print(score)
+     df_score = pd.DataFrame(score,
+                            columns=['total_score', 'score_safe', 'score_efficiency', 'score_comfort'],
+                            index=names)
+     df_score.to_csv('highway_results.csv', header=True, index=True)
+
     # file_path=r"C:\Users\Administrator\Desktop\实验\outputs_v2\0000follow1_result.csv"
     # recording_path=r"D:\PycharmProjects\pythonProject\server_v3\database\recording.csv"
     # start_destpath=r"D:\PycharmProjects\pythonProject\server_v3\database\start_dest.csv"

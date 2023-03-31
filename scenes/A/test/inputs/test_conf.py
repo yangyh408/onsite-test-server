@@ -1,7 +1,7 @@
 config = {
     'test_settings': {
         'mode': 'replay',
-        'visualize': False,
+        'visualize': True,
         'skip_exist_scene': False,
     },
 }

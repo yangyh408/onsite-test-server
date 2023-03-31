@@ -25,6 +25,22 @@ def evaluating_multiple_scenarios(trajectory_path: str, scenario_path: str, inte
     efficiency_score = []
     comfort_score = []
     all_score = []
+    Mean_ttc=[]
+    Oppo_lane_rate=[]
+    Out_lane_rate=[]
+    Run_red=[]
+    Done_ornot=[]
+    Mean_v=[]
+    Distance_todest=[]
+    a_x=[]
+    d_x=[]
+    a_y=[]
+    d_y=[]
+    aa_x=[]
+    dd_x=[]
+    aa_y=[]
+    dd_y=[]
+    turn_a=[]
     trajectory_list = list(os.listdir(trajectory_path))
     for item in trajectory_list:
         # sgimport.theme('lightgrey')
@@ -45,8 +61,8 @@ def evaluating_multiple_scenarios(trajectory_path: str, scenario_path: str, inte
             list_HAV = answersheet.values
             list_HAV = np.array(list_HAV[1:])
             list_HAV = list_HAV.astype(np.float64)
-            score = Evaluation(list_HAV, start_destpath, scenario, area=5, safety=50, efficiency=30, comfort=20,
-                            dt=0.04, output_type='default')
+            score = Evaluation(list_HAV, start_destpath, scenario, area=0, safety=50, efficiency=30, comfort=20,
+                            dt=0.04, output_type='details')
             safetyscore = float(format(score[1], '.2f'))
             efficiencyscore = float(format(score[2], '0.2f'))
             comfortscore = round(score[3], 2)
@@ -55,29 +71,62 @@ def evaluating_multiple_scenarios(trajectory_path: str, scenario_path: str, inte
             efficiency_score.append(efficiencyscore)
             comfort_score.append(comfortscore)
             all_score.append(allscore)
+            Mean_ttc.append(score[4])
+            Oppo_lane_rate.append(score[5])
+            Out_lane_rate.append(score[6])
+            Run_red.append(score[7])
+            Done_ornot.append(score[8])
+            Mean_v.append(score[9])
+            Distance_todest.append(score[10])
+            a_x.append(score[11])
+            d_x.append(score[12])
+            a_y.append(score[13])
+            d_y.append(score[14])
+            aa_x.append(score[15])
+            dd_x.append(score[16])
+            aa_y.append(score[17])
+            dd_y.append(score[18])
+            turn_a.append(score[19])
+
             # print('该场景安全得分为：', safetyscore, '\n该场景效率得分为：', efficiencyscore, '\n该场景舒适得分为：', comfortscore, '\n该场景总得分为：', allscore)
         elif ego_front_vehicle_info.relation_judgement.info.replay_info['evaluation_type'] == 'scheme_two':  # 交叉口评价体系
             ego_front_vehicle_info.init(interval)
             ego_front_vehicle_info.ndarray_to_dataframe()
             # 安全得分(0-50)
             safety_deduct = SafetyCriteria(ego_front_vehicle_info)
-            safety_deduct_score = safety_deduct.safety_evaluation()
+            safety_deduct_score,mean_ttc,oppo_lane_rate,out_area_rate,run_red = safety_deduct.safety_evaluation()
             safetyscore=round(50 - safety_deduct_score,2)
             safety_score.append(safetyscore)
+            Mean_ttc.append(mean_ttc)
+            Oppo_lane_rate.append(oppo_lane_rate)
+            Out_lane_rate.append(out_area_rate)
+            Run_red.append(run_red)
             #print('该场景安全得分为：', safetyscore)
 
             # 效率得分(0-30)
             efficiency_deduct = EfficiencyCriteria(ego_front_vehicle_info)
-            efficiency_deduct_score = efficiency_deduct.efficiency_evaluation()
+            efficiency_deduct_score,done_ornot,mean_vy,distance_todest = efficiency_deduct.efficiency_evaluation()
             efficiencyscore=round(30-efficiency_deduct_score,2)
             efficiency_score.append(efficiencyscore)
+            Done_ornot.append(done_ornot)
+            Mean_v.append(mean_vy)
+            Distance_todest.append(distance_todest)
             #print('该场景效率得分为：', efficiencyscore)
 
             # 舒适得分(0-20)
             comfort_deduct = ComfortCriteria(ego_front_vehicle_info)
-            comfort_deduct_score = comfort_deduct.comfort_evaluation()
+            comfort_deduct_score,mean_vertical_a,mean_vertical_d,mean_horizontal_a,mean_horizontal_d,mean_vertical_aa,mean_vertical_dd,mean_horizontal_aa, mean_horizontal_dd,mean_turn_a= comfort_deduct.comfort_evaluation()
             comfortscore=round(20-comfort_deduct_score,2)
             comfort_score.append(comfortscore)
+            a_x.append(mean_vertical_a)
+            d_x.append(mean_vertical_d)
+            a_y.append(mean_horizontal_a)
+            d_y.append(mean_horizontal_d)
+            aa_x.append(mean_vertical_aa)
+            dd_x.append(mean_vertical_dd)
+            aa_y.append(mean_horizontal_aa)
+            dd_y.append(mean_horizontal_dd)
+            turn_a.append(mean_turn_a)
             #print('该场景舒适得分为：', comfortscore)
 
             total_score = round(100 - safety_deduct_score - efficiency_deduct_score - comfort_deduct_score,2)
@@ -85,12 +134,12 @@ def evaluating_multiple_scenarios(trajectory_path: str, scenario_path: str, inte
             #print('该场景总得分为：', total_score)
         elif ego_front_vehicle_info.relation_judgement.info.replay_info['evaluation_type'] == 'scheme_three': #汇入汇出
             scenario_path_detail = os.path.join(scenario_path + "/" + scenario)
-            scenariotype_path = os.path.join(os.path.dirname(__file__), './ramp/scenario_type.csv')
+            #scenariotype_path = os.path.join(os.path.dirname(__file__), './ramp/scenario_type.csv')
             answersheet = write_answersheet_ramp(file_path, scenario_path_detail)
             list_HAV = answersheet.values
             # list_HAV = np.array(list_HAV[3:,:])#实车轨迹存在误差，需用这个改动
             list_HAV = np.array(list_HAV)
-            score = Evaluation_ramp(list_HAV, scenariotype_path, scenario, scenario_path_detail, safety=50, \
+            score = Evaluation_ramp(list_HAV, scenario, scenario_path_detail, safety=50, \
                                     efficiency=30, comfort=20, dt=0.1, output_type="default")
             safetyscore = float(format(score[1], '.2f'))
             efficiencyscore = float(format(score[2], '0.2f'))
@@ -100,6 +149,22 @@ def evaluating_multiple_scenarios(trajectory_path: str, scenario_path: str, inte
             efficiency_score.append(efficiencyscore)
             comfort_score.append(comfortscore)
             all_score.append(allscore)
+            Mean_ttc.append(score[4])
+            Oppo_lane_rate.append(score[5])
+            Out_lane_rate.append(score[6])
+            Run_red.append(score[7])
+            Done_ornot.append(score[8])
+            Mean_v.append(score[9])
+            Distance_todest.append(score[10])
+            a_x.append(score[11])
+            d_x.append(score[12])
+            a_y.append(score[13])
+            d_y.append(score[14])
+            aa_x.append(score[15])
+            dd_x.append(score[16])
+            aa_y.append(score[17])
+            dd_y.append(score[18])
+            turn_a.append(score[19])
         elif ego_front_vehicle_info.relation_judgement.info.replay_info['evaluation_type'] == 'scheme_four':  # 其他评价体系
                 #print('使用其他评价体系')
                 safety_score.append(100)
@@ -107,7 +172,10 @@ def evaluating_multiple_scenarios(trajectory_path: str, scenario_path: str, inte
                 comfort_score.append(100)
                 all_score.append(300)
         # _tqdm.update(1)
-    return all_scenario, safety_score, efficiency_score, comfort_score, all_score
+    return ([all_scenario, safety_score, efficiency_score, comfort_score, all_score,Mean_ttc,Oppo_lane_rate,Out_lane_rate,Run_red,Done_ornot,Mean_v,Distance_todest,\
+a_x,d_x,a_y,d_y,aa_x,dd_x,aa_y,dd_y,turn_a])
+
+
 
 
 
@@ -118,22 +186,27 @@ def _check_dir(path):
 
 def recording(result: tuple, output: str) -> None:
     _check_dir(output)
-    (scenario, safety, efficiency, comfort, total) = result
-    result_array = np.array([np.array(scenario),
-                            np.array(safety),
-                            np.array(efficiency),
-                            np.array(comfort),
-                            np.array(total)])
+    # (scenario, safety, efficiency, comfort, total) = result
+    # result_array = np.array([np.array(scenario),
+    #                         np.array(safety),
+    #                         np.array(efficiency),
+    #                         np.array(comfort),
+    #                         np.array(total)])
+    result_array = np.array(result)
     note = pd.Series(
         ['1.本工具从安全性(满分50分)、效率性(满分30分) 以及舒适性(满分20分)三个维度对规控器进行性能评价，总分满分100分。',
         '2.用户可依据评价结果选取需要的场景，借助onsite官网提供的可视化工具对该场景下的驾驶场景进行复现。'])
-    result_dataframe = pd.DataFrame(result_array.T, columns=['Scenario', 'Safety', 'Efficiency', 'Comfort', 'Total'])
+    result_dataframe = pd.DataFrame(result_array.T, columns=['Scenario', 'Safety', 'Efficiency', 'Comfort', 'Total','mean_ttc','oppo_lane_rate','out_lane_rate','run_red',\
+                                                             'done_ornot','Mean_v','Distance_todest','a_x','d_x','a_y','d_y','aa_x','dd_x','aa_y','dd_y','turn_a'])
     result_dataframe0 = pd.DataFrame(np.insert(result_dataframe.values, len(result_dataframe.index),
-                                               values=["Mean", round(mean(safety), 2), round(mean(efficiency), 2),
-                                                       round(mean(comfort), 2), round(mean(total), 2)], axis=0))
+                                               values=["Mean", round(mean(result_array[1,:].astype(float)), 2), round(mean(result_array[2,:].astype(float)), 2),
+                                                       round(mean(result_array[3,:].astype(float)), 2), round(mean(result_array[4,:].astype(float)), 2),mean(result_array[5,:].astype(float)),mean(result_array[6,:].astype(float)),mean(result_array[7,:].astype(float)),mean(result_array[8,:].astype(float)),\
+                                                       mean(result_array[9,:].astype(float)),mean(result_array[10,:].astype(float)),mean(result_array[11,:].astype(float)),mean(result_array[12,:].astype(float)),mean(result_array[13,:].astype(float)),mean(result_array[14,:].astype(float)),\
+                                                       mean(result_array[15,:].astype(float)),mean(result_array[16,:].astype(float)),mean(result_array[17,:].astype(float)),mean(result_array[18,:].astype(float)),mean(result_array[19,:].astype(float)),mean(result_array[20,:].astype(float))], axis=0))
     result_dataframe0.columns = result_dataframe.columns
     result_dataframe1 = pd.concat([result_dataframe0, note], axis=1)
-    result_dataframe1.columns = ['Scenario', 'Safety', 'Efficiency', 'Comfort', 'Total', 'Note']
+    result_dataframe1.columns = ['Scenario', 'Safety', 'Efficiency', 'Comfort', 'Total', 'mean_ttc','oppo_lane_rate','out_lane_rate','run_red',\
+                                                             'done_ornot','Mean_v','Distance_todest','a_x','d_x','a_y','d_y','aa_x','dd_x','aa_y','dd_y','turn_a','Note']
     result_dataframe1.to_csv(os.path.join(output, 'score.csv'), index=False, encoding="utf_8_sig")
     return None
 

@@ -16,34 +16,36 @@ class EfficiencyCriteria:
         self.info_table = EgoForwardVehicleInfo
 
     def penalty_for_unfinished_task(self) -> None:
+        distance_todest=0
         if self.info_table.relation_judgement.info.replay_info['travel_direction'][1] == 'N':
             if float(self.info_table.ego_front_vehicle_info.iloc[-1, :].y_ego) < (min(self.info_table.relation_judgement.info.openScenario_info['goal_y']) - 5):
                 self.deducted_score = 10
                 #print("距离：",min(self.info_table.relation_judgement.info.openScenario_info['goal_y'])-float(self.info_table.ego_front_vehicle_info.iloc[-1, :].y_ego))
+                distance_todest=min(self.info_table.relation_judgement.info.openScenario_info['goal_y'])-float(self.info_table.ego_front_vehicle_info.iloc[-1, :].y_ego)
             else:
                 self.deducted_score = 0
         elif self.info_table.relation_judgement.info.replay_info['travel_direction'][1] == 'S':
             if (max(self.info_table.relation_judgement.info.openScenario_info['goal_y']) + 5) < float(self.info_table.ego_front_vehicle_info.iloc[-1, :].y_ego):
                 self.deducted_score = 10
                 #print("距离：",float(self.info_table.ego_front_vehicle_info.iloc[-1, :].y_ego)-max(self.info_table.relation_judgement.info.openScenario_info['goal_y']))
-
+                distance_todest=float(self.info_table.ego_front_vehicle_info.iloc[-1, :].y_ego)-max(self.info_table.relation_judgement.info.openScenario_info['goal_y'])
             else:
                 self.deducted_score = 0
         elif self.info_table.relation_judgement.info.replay_info['travel_direction'][1] == 'W':
             if (max(self.info_table.relation_judgement.info.openScenario_info['goal_x']) + 5) < float(self.info_table.ego_front_vehicle_info.iloc[-1, :].x_ego):
                 self.deducted_score = 10
                 #print("距离：",float(self.info_table.ego_front_vehicle_info.iloc[-1, :].x_ego)-max(self.info_table.relation_judgement.info.openScenario_info['goal_x']))
-
+                distance_todest=float(self.info_table.ego_front_vehicle_info.iloc[-1, :].x_ego)-max(self.info_table.relation_judgement.info.openScenario_info['goal_x'])
             else:
                 self.deducted_score = 0
         elif self.info_table.relation_judgement.info.replay_info['travel_direction'][1] == 'E':
             if float(self.info_table.ego_front_vehicle_info.iloc[-1, :].x_ego) < (min(self.info_table.relation_judgement.info.openScenario_info['goal_x']) - 5):
                 self.deducted_score = 10
                 #print("距离：",min(self.info_table.relation_judgement.info.openScenario_info['goal_x'])-float(self.info_table.ego_front_vehicle_info.iloc[-1, :].x_ego))
-
+                distance_todest=min(self.info_table.relation_judgement.info.openScenario_info['goal_x'])-float(self.info_table.ego_front_vehicle_info.iloc[-1, :].x_ego)
             else:
                 self.deducted_score = 0
-        return None
+        return distance_todest
 
     def penalty_for_time_consuming(self) -> None:
         speed_limited = 9
@@ -83,9 +85,13 @@ class EfficiencyCriteria:
         temporary_score = np.clip(temporary_score, 0, 20)
         self.deducted_score = self.deducted_score + 20 - temporary_score
         #print("平均速度：", expected_time / float(self.info_table.ego_front_vehicle_info.iloc[-1, :].time) * 9)
-        return None
+        mean_vy=expected_time / float(self.info_table.ego_front_vehicle_info.iloc[-1, :].time)* 9
+        return mean_vy
 
     def efficiency_evaluation(self) -> float:
+        done_ornot=0
+        mean_vy=0
+        distance_todest =0
         if self.info_table.ego_front_vehicle_info is None:
             self.deducted_score = 30
         elif self.info_table.ego_front_vehicle_info.loc[
@@ -99,23 +105,26 @@ class EfficiencyCriteria:
                     self.info_table.relation_judgement.info.replay_info['travel_direction'][0]) == len(self.info_table.relation_judgement.info.replay_info['travel_direction']):
                 self.deducted_score = 10
                 #print("行驶方向错误")# 未完成任务的10分
-                self.penalty_for_time_consuming()
+                done_ornot = 1
+                mean_vy=self.penalty_for_time_consuming()
                 self.deducted_score = np.clip(self.deducted_score, 0, 30)
             elif self.info_table.relation_judgement.info.replay_info['travel_direction'][1] == 'IN':
                 self.deducted_score = 10
                 #print("未驶出交叉口")# 未完成任务的10分
-                self.penalty_for_time_consuming()
+                done_ornot = 1
+                mean_vy=self.penalty_for_time_consuming()
                 self.deducted_score = np.clip(self.deducted_score, 0, 30)
             elif tuple(self.info_table.relation_judgement.info.replay_info['travel_direction']) != self.info_table.relation_judgement.info.replay_info['target_travel_direction']:
                 self.deducted_score = 10
                 #print("行驶方向错误")
-                self.penalty_for_time_consuming()
+                done_ornot = 1
+                mean_vy=self.penalty_for_time_consuming()
                 self.deducted_score = np.clip(self.deducted_score, 0, 30)
             else:
-                self.penalty_for_unfinished_task()
-                self.penalty_for_time_consuming()
+                distance_todest=self.penalty_for_unfinished_task()
+                mean_vy=self.penalty_for_time_consuming()
                 self.deducted_score = np.clip(self.deducted_score, 0, 30)
-        return self.deducted_score
+        return self.deducted_score,done_ornot,mean_vy,distance_todest
 
 if __name__ == "__main__":
     Trajectory_path = r''

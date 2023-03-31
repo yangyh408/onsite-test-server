@@ -26,8 +26,8 @@ class RunEvaluator():
             return -1
 
 if __name__ == '__main__':
-    input_dir = r"/home/ubuntu/onsite-develop/onsite-test-server/scenes/A/complex/inputs"
-    output_dir = r"/home/ubuntu/onsite-develop/onsite-test-server/temp/s_20230320051500_20230316121333"
-    evaluator = RunEvaluator(save_record = True)
+    input_dir = os.path.join(os.path.dirname(__file__), '../scenes/A/test/inputs')
+    output_dir = os.path.join(os.path.dirname(__file__), '../temp/test_outputs')
+    evaluator = RunEvaluator('123', save_record = True)
     # evaluator.evaluate(input_dir, output_dir)
     result = evaluating_multiple_scenarios(output_dir, input_dir)
