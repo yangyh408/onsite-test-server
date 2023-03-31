@@ -16,7 +16,7 @@ from server_v3.evaluate import Evaluation
 from server_v3.evaluate import write_answerSheet
 from ramp.ramp_eval import write_answersheet_ramp
 from ramp.ramp_eval import Evaluation_ramp
-# import PySimpleGUI as sgimport
+import PySimpleGUI as sgimport
 from statistics import mean
 
 def evaluating_multiple_scenarios(trajectory_path: str, scenario_path: str, interval: int = 5) -> tuple:
@@ -49,8 +49,11 @@ def evaluating_multiple_scenarios(trajectory_path: str, scenario_path: str, inte
         if item[0] != '.' and  '_result.csv' in item:
             all_scenario.append(item[:-11])
     # with tqdm(total=len(all_scenario)) as _tqdm:
-    for scenario in all_scenario:
-        # _tqdm.set_description(f"--> scene<{scenario}>")    
+    for i,scenario in enumerate(all_scenario):
+        # _tqdm.set_description(f"--> scene<{scenario}>")
+        sgimport.theme('lightgrey')
+        #sgimport.set_global_icon(filename='onsite.png')
+        sgimport.one_line_progress_meter("评价进度", i , len(trajectory_list), orientation='h',button_color=('black','lightgrey'))
         file_path = os.path.join(trajectory_path, f"{scenario}_result.csv")
         ego_front_vehicle_info = EgoForwardVehicleInfo(file_path, scenario_path)
         if ego_front_vehicle_info.relation_judgement.info.replay_info['evaluation_type'] == 'scheme_one':  # 高速公路评价体系
@@ -192,27 +195,23 @@ def recording(result: tuple, output: str) -> None:
     #                         np.array(efficiency),
     #                         np.array(comfort),
     #                         np.array(total)])
-    result_array = np.array(result)
+    result_array = np.array(result[:5])
     note = pd.Series(
         ['1.本工具从安全性(满分50分)、效率性(满分30分) 以及舒适性(满分20分)三个维度对规控器进行性能评价，总分满分100分。',
         '2.用户可依据评价结果选取需要的场景，借助onsite官网提供的可视化工具对该场景下的驾驶场景进行复现。'])
-    result_dataframe = pd.DataFrame(result_array.T, columns=['Scenario', 'Safety', 'Efficiency', 'Comfort', 'Total','mean_ttc','oppo_lane_rate','out_lane_rate','run_red',\
-                                                             'done_ornot','Mean_v','Distance_todest','a_x','d_x','a_y','d_y','aa_x','dd_x','aa_y','dd_y','turn_a'])
+    result_dataframe = pd.DataFrame(result_array.T, columns=['Scenario', 'Safety', 'Efficiency', 'Comfort', 'Total'])
     result_dataframe0 = pd.DataFrame(np.insert(result_dataframe.values, len(result_dataframe.index),
                                                values=["Mean", round(mean(result_array[1,:].astype(float)), 2), round(mean(result_array[2,:].astype(float)), 2),
-                                                       round(mean(result_array[3,:].astype(float)), 2), round(mean(result_array[4,:].astype(float)), 2),mean(result_array[5,:].astype(float)),mean(result_array[6,:].astype(float)),mean(result_array[7,:].astype(float)),mean(result_array[8,:].astype(float)),\
-                                                       mean(result_array[9,:].astype(float)),mean(result_array[10,:].astype(float)),mean(result_array[11,:].astype(float)),mean(result_array[12,:].astype(float)),mean(result_array[13,:].astype(float)),mean(result_array[14,:].astype(float)),\
-                                                       mean(result_array[15,:].astype(float)),mean(result_array[16,:].astype(float)),mean(result_array[17,:].astype(float)),mean(result_array[18,:].astype(float)),mean(result_array[19,:].astype(float)),mean(result_array[20,:].astype(float))], axis=0))
+                                                       round(mean(result_array[3,:].astype(float)), 2), round(mean(result_array[4,:].astype(float)), 2)], axis=0))
     result_dataframe0.columns = result_dataframe.columns
     result_dataframe1 = pd.concat([result_dataframe0, note], axis=1)
-    result_dataframe1.columns = ['Scenario', 'Safety', 'Efficiency', 'Comfort', 'Total', 'mean_ttc','oppo_lane_rate','out_lane_rate','run_red',\
-                                                             'done_ornot','Mean_v','Distance_todest','a_x','d_x','a_y','d_y','aa_x','dd_x','aa_y','dd_y','turn_a','Note']
+    result_dataframe1.columns = ['Scenario', 'Safety', 'Efficiency', 'Comfort', 'Total','Note']
     result_dataframe1.to_csv(os.path.join(output, 'score.csv'), index=False, encoding="utf_8_sig")
     return None
 
 
 if __name__ == "__main__":
-    mode = 0
+    mode = 1
     if mode == 1:
         info = Interface()
         infoscenario,infotrajectory,infoeval = info.interface_making()
@@ -235,6 +234,8 @@ if __name__ == "__main__":
     else:
         Scenario_path = os.path.join(os.path.dirname(os.path.realpath(sys.executable)), "./inputs")
         Trajectory_path = os.path.join(os.path.dirname(os.path.realpath(sys.executable)), "./outputs")
+        #Scenario_path =r"D:\PycharmProjects\pythonProject2\onsite-test-server-main\onsite-test-server-main\scenes\A\test\inputs"
+        #Trajectory_path =r"D:\PycharmProjects\pythonProject2\onsite-test-server-main\onsite-test-server-main\temp\test_outputs"
         Interval = 1
         Output = os.path.join(os.path.dirname(os.path.realpath(sys.executable)), "./outputs")
         record = True
