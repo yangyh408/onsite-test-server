@@ -16,7 +16,8 @@ class Uploader:
     def _connect(self, username = "zhouhuajun", password = "q9ieC21p1yRaHYGqFo0N5x7OoedsDVla"):
         self.up = upyun.UpYun('onsite', username=username, password=password, endpoint=upyun.ED_AUTO)
     
-    def upload(self):
+    def upload(self, test_status: object):
+        test_status.update('upload')
         retry_times = 10
         while retry_times := retry_times - 1:
             upload_listen, _ = self._upload_file()
@@ -24,19 +25,19 @@ class Uploader:
                 break
             else:
                 time.sleep(5)
-        
+        test_status.update('upload', upload_listen)
         if upload_listen['status'] == 'SUCCESS':
-            self._delete_file(self.zip_file_path)
-            # shutil.rmtree(self.output_dir)
-            return upload_listen, 'https://resource.onsite.run' + self.remote_dir + self.zip_file_name
+            return 'https://resource.onsite.run' + self.remote_dir + self.zip_file_name
         else:
-            return upload_listen, None
+            return None
     
     @listen
     def _upload_file(self):
         self._connect()
         self._zip_dir(self.output_dir, self.zip_file_path)
         self._to_upyun(self.zip_file_path)
+        self._delete_file(self.zip_file_path)
+        shutil.rmtree(self.output_dir)
 
     def _update_zip_file_name(self, userid, submit_time):
         return f"{userid}&{submit_time}.zip".replace(":", "-").replace(" ", "_")
@@ -63,10 +64,10 @@ if __name__ == "__main__":
     BASEDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     INPUT_ROOT_DIR = os.path.join(BASEDIR, 'scenes')
     OUTPUT_DIR = os.path.join(BASEDIR, 'temp')
-    ERROR_LOG_DIR = os.path.join(BASEDIR, 'log/error_log')
-    
+    RECORD_DIR = os.path.join(BASEDIR, 'record')
+
     from tester import Tester
-    test_module = Tester(OUTPUT_DIR, ERROR_LOG_DIR)
+    test_module = Tester(OUTPUT_DIR, RECORD_DIR)
     for submit_info in test_module.db.get_submits(submitId='s_20230331080127_20230307123639'):
         uploader = Uploader(test_module.output_root_dir, submit_info)
         print(uploader.upload())

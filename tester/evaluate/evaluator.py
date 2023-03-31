@@ -184,8 +184,9 @@ def _check_dir(path):
         os.makedirs(path)
 
 
-def recording(result: tuple, output: str) -> None:
+def recording(result: tuple, output: str, detail_output: str) -> None:
     _check_dir(output)
+    _check_dir(detail_output)
     # (scenario, safety, efficiency, comfort, total) = result
     # result_array = np.array([np.array(scenario),
     #                         np.array(safety),
@@ -207,6 +208,19 @@ def recording(result: tuple, output: str) -> None:
     result_dataframe1 = pd.concat([result_dataframe0, note], axis=1)
     result_dataframe1.columns = ['Scenario', 'Safety', 'Efficiency', 'Comfort', 'Total', 'mean_ttc','oppo_lane_rate','out_lane_rate','run_red',\
                                                              'done_ornot','Mean_v','Distance_todest','a_x','d_x','a_y','d_y','aa_x','dd_x','aa_y','dd_y','turn_a','Note']
+    result_dataframe1.to_csv(os.path.join(detail_output, 'score_detail.csv'), index=False, encoding="utf_8_sig")
+    
+    result_array = np.array(result[:5])
+    note = pd.Series(
+        ['1.本工具从安全性(满分50分)、效率性(满分30分) 以及舒适性(满分20分)三个维度对规控器进行性能评价，总分满分100分。',
+        '2.用户可依据评价结果选取需要的场景，借助onsite官网提供的可视化工具对该场景下的驾驶场景进行复现。'])
+    result_dataframe = pd.DataFrame(result_array.T, columns=['Scenario', 'Safety', 'Efficiency', 'Comfort', 'Total'])
+    result_dataframe0 = pd.DataFrame(np.insert(result_dataframe.values, len(result_dataframe.index),
+                                               values=["Mean", round(mean(result_array[1,:].astype(float)), 2), round(mean(result_array[2,:].astype(float)), 2),
+                                                       round(mean(result_array[3,:].astype(float)), 2), round(mean(result_array[4,:].astype(float)), 2)], axis=0))
+    result_dataframe0.columns = result_dataframe.columns
+    result_dataframe1 = pd.concat([result_dataframe0, note], axis=1)
+    result_dataframe1.columns = ['Scenario', 'Safety', 'Efficiency', 'Comfort', 'Total','Note']
     result_dataframe1.to_csv(os.path.join(output, 'score.csv'), index=False, encoding="utf_8_sig")
     return None
 

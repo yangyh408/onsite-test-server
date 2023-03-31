@@ -2,7 +2,7 @@ import datetime
 import time
 import pymysql
 from dbutils.pooled_db import PooledDB
-from logger import debugger, db_logger
+from logger import db_logger
 
 HOSTNAME = "sh-cynosdbmysql-grp-lqu1mnle.sql.tencentcdb.com"
 PORT = 23574
@@ -127,7 +127,6 @@ def get_competition_info(connector, competition_name):
     else:
         return None, None
     
-@debugger('func')
 def db_insert(connector, *, user, dockerid, competition):
     if dockerid is None or competition is None:
         err = f"Please provide complete parameters: 'dockerId', 'competitionName'"

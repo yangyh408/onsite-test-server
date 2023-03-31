@@ -8,7 +8,7 @@ class DockerTool:
         self.input_path = input_path
         self.output_path = output_path
     
-    def run(self, docker_id: str) -> str:
+    def run(self, docker_id: str, test_status: object) -> str:
         """
             测试docker_id对应的镜像
         Args:
@@ -21,20 +21,22 @@ class DockerTool:
                  "Pull error" -> 拉取镜像失败
                  "Container error" -> 被测物测试时出错
         """
-        docker_listen = {}
-        pull_listen, (res, pull_error) = self._pull_docker(docker_id)
-        if res == 'SUCCESS': 
-            test_listen, (res, test_error) = self._test_docker(docker_id)
-            if res != 'SUCCESS':
+        test_status.update('pull')
+        pull_listen, (docker_status, pull_error) = self._pull_docker(docker_id)
+        if docker_status == 'SUCCESS': 
+            test_status.update('pull', pull_listen)
+            test_status.update('test')
+            test_listen, (docker_status, test_error) = self._test_docker(docker_id)
+            if docker_status != 'SUCCESS':
                 test_listen['status'] = 'ERROR'
                 test_listen['error_msg'] = test_error
-            docker_listen['test'] = test_listen
+            test_status.update('test', test_listen)
             self._delete_image(docker_id)
         else:
             pull_listen['status'] = 'ERROR'
             pull_listen['error_msg'] = pull_error
-        docker_listen['pull'] = pull_listen
-        return docker_listen, res
+            test_status.update('pull', pull_listen)
+        return docker_status
 
     @listen
     def _pull_docker(self, docker_id: str) -> str:

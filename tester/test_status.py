@@ -25,8 +25,8 @@ def listen(func):
     return wrapper
 
 class TestStatus:
-    def __init__(self, error_log_dir, submitId, database):
-        self.error_path = os.path.join(error_log_dir, f"{submitId}.txt")
+    def __init__(self, record_dir, submitId, database):
+        self.error_path = os.path.join(record_dir, "error.txt")
         self.submitId = submitId
         self.database = database
         self.record = {
@@ -42,11 +42,10 @@ class TestStatus:
             self.record[module]['status'] = listen_result['status']
             self.record[module]['cost'] = listen_result['cost']
             if listen_result['error_msg']:
-                with open(self.error_path, 'w+') as f:
+                with open(self.error_path, 'a') as f:
                     f.write(listen_result['error_msg'])
         else:
             self.record[module]['status'] = 'RUNNING'
-        print(self.record)
         self._update_database()
     
     def _update_database(self):

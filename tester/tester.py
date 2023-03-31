@@ -9,9 +9,9 @@ from uploader import Uploader
 from run_evaluator import RunEvaluator
 
 class Tester():
-    def __init__(self, output_dir: str, error_log_dir: str) -> None:
+    def __init__(self, output_dir: str, record_dir: str) -> None:
         self.output_root_dir = os.path.abspath(output_dir)
-        self.error_log_dir = os.path.abspath(error_log_dir)
+        self.record_root_dir = os.path.abspath(record_dir)
         
         self.db = Connector()
 
@@ -39,45 +39,35 @@ class Tester():
         self.db.update(table = 'submit', info = {"status": "TESTING", "testTime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}, logic = 'AND', submitId = submit_info['submitId'])
         
         output_dir = os.path.join(self.output_root_dir, submit_info['submitId'])
+        record_dir = os.path.join(self.record_root_dir, submit_info['submitId'])
         self._reset_dir(output_dir)
+        self._reset_dir(record_dir)
         
-        test_status = TestStatus(self.error_log_dir, submit_info['submitId'], self.db)
+        test_status = TestStatus(record_dir, submit_info['submitId'], self.db)
+        
         docker = DockerTool(input_dir, output_dir)
+        docker_status = docker.run(submit_info['dockerId'], test_status)
         
-        test_status.update('pull')
-        pull_listen, (docker_status, pull_error) = docker._pull_docker(submit_info['dockerId'])
-        if docker_status == 'SUCCESS': 
-            test_status.update('pull', pull_listen)
-            test_status.update('test')
-            test_listen, (docker_status, test_error) = docker._test_docker(submit_info['dockerId'])
-            if docker_status != 'SUCCESS':
-                test_listen['status'] = 'ERROR'
-                test_listen['error_msg'] = test_error
-            test_status.update('test', test_listen)
-            docker._delete_image(submit_info['dockerId'])
-        else:
-            pull_listen['status'] = 'ERROR'
-            pull_listen['error_msg'] = pull_error
-            test_status.update('pull', pull_listen)
-
         uploader = Uploader(self.output_root_dir, submit_info)
 
         if docker_status == 'SUCCESS':
-            evaluator = RunEvaluator(submit_info['submitId'], save_record = True)
-            score = evaluator.evaluate(self.input_dir, output_dir)
+            evaluator = RunEvaluator(save_record = True)
+            score = evaluator.evaluate(input_dir, output_dir, record_dir, test_status)
             if score == -1:
-                upyun_link = uploader.upload(submit_info['competitionId'], submit_info['submitterId'], submit_info['submitTime'], output_dir)
+                upyun_link = uploader.upload(test_status)
                 result = self._result('EVALUATE ERROR', None, upyun_link)
                 return result
             
-            upyun_link = uploader.upload(submit_info['competitionId'], submit_info['submitterId'], submit_info['submitTime'], output_dir)
+            upyun_link = uploader.upload(test_status)
             if upyun_link:
                 result = self._result('SUCCESS', score, upyun_link)
             else:
                 result = self._result('UPLOAD ERROR', score, None)
         else:
-            upyun_link = uploader.upload(submit_info['competitionId'], submit_info['submitterId'], submit_info['submitTime'], output_dir)
+            upyun_link = uploader.upload(test_status)
             result = self._result(docker_status, None, upyun_link)
+            
+        self.db.update(table = 'submit', info = result, logic = 'AND', submitId = submit_info['submitId'])
         return result
     
     def _result(self, status, score, resultLink):
@@ -100,9 +90,9 @@ if __name__ == '__main__':
     BASEDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     INPUT_ROOT_DIR = os.path.join(BASEDIR, 'scenes')
     OUTPUT_DIR = os.path.join(BASEDIR, 'temp')
-    ERROR_LOG_DIR = os.path.join(BASEDIR, 'log/error_log')
+    RECORD_DIR = os.path.join(BASEDIR, 'record')
 
-    test_module = Tester(OUTPUT_DIR, ERROR_LOG_DIR)
+    test_module = Tester(OUTPUT_DIR, RECORD_DIR)
     for submit_info in test_module.db.get_submits(submitId='s_20230331080127_20230307123639'):
         test_module.test(r"/home/ubuntu/onsite-test-server/scenes/A/test/inputs", submit_info)
     # import json
