@@ -169,6 +169,7 @@ def write_answersheet_ramp(outputs_path,scenario_path):
         laneid_nonego = pd.DataFrame(laneid_nonego)
         nonego = pd.concat([nonego, laneid_nonego], axis=1)
     #print(nonego)
+    nonego.to_csv("nonego.csv")
 
     nonego = nonego.values.tolist()
     pre_x = []
@@ -180,16 +181,10 @@ def write_answersheet_ramp(outputs_path,scenario_path):
     if np.shape(x_ego)[0] > 1:
         for t in range(0, np.shape(vx_egodata)[0]):
             distance = []
-            if laneid_ego[t]!=zd_id:
-                for i in range(0, num_nonego - 1):
-                    distance.append(nonego[t][7 * i] - x_ego[t])
-                    if distance[i] < 0 or laneid_ego[t] != nonego[t][7 * num_nonego + i]:
-                        distance[i] = 9999
-            else:
-                for i in range(0, num_nonego - 1):
-                    distance.append(nonego[t][7 * i+1] - y_ego[t])
-                    if distance[i] < 0 or laneid_ego[t] != nonego[t][7 * num_nonego + i]:
-                        distance[i] = 9999
+            for i in range(0, num_nonego ):
+                distance.append(nonego[t][7 * i] - x_ego[t])
+                if distance[i] < 0 or laneid_ego[t] != nonego[t][7 * num_nonego + i]:
+                    distance[i] = 9999
             if distance:
                 pre_index = distance.index(min(distance))
                 if distance[pre_index] == 9999:
@@ -263,30 +258,23 @@ def write_answersheet_ramp(outputs_path,scenario_path):
     return answersheet
 
 
-def Evaluation_ramp(list_HAV,scenariotype_path,scenario,scenario_path,safety=50,efficiency=30,comfort=20,dt=0.1,output_type='default'):
+def Evaluation_ramp(list_HAV,scenario,scenario_path,safety=50,efficiency=30,comfort=20,dt=0.1,output_type='default'):
     # 读取起终点
     replay_info, zd_id, destx_left,desty_left,destx_right,desty_right = parserd_v2(scenario_path)
     path_openScenario=os.path.join(scenario_path+"/"+scenario+"_exam.xosc")
     openScenario_info = parse_openScenario(path_openScenario)
     goal_x = openScenario_info['goal_x'][0]
-    start = 0
-    destinationx = 0
-    destinationy = 0
-    scenario_type=""
-    scenario_typedata = pd.read_csv(scenariotype_path)
-    scenario_typedata=np.array(scenario_typedata)
-    num_scenario = np.shape(scenario_typedata)[0]
-    for i in range(0, num_scenario):
-        if scenario_typedata[i][0] == str(scenario):
-            scenario_type=scenario_typedata[i][1]
-            if scenario_typedata[i][1] == "following":
-                destinationx = goal_x
-            elif scenario_typedata[i][1] == "rampin":
-                destinationx = goal_x
-                destinationy = desty_left
-            else:  ##汇出场景可能有问题，需要修改
-                destinationx = goal_x
-                destinationy = desty_right
+    goal_y = openScenario_info['goal_y'][0]
+    destinationid=""
+    for discrete_lane in replay_info.discretelanes:
+        vert_x, vert_y = RelationJudgement.sampling_from_vertices_inside_intersection(discrete_lane, 5)
+        if RelationJudgement.pnpoly(len(vert_x), vert_x, vert_y,  goal_x, goal_y):
+            destinationid = discrete_lane.lane_id
+
+
+
+    destinationx = goal_x
+    destinationy = goal_y
     list_HAV1=list_HAV[:,:13].astype(np.float64)
     list_HAV3=list_HAV[:,14:].astype(np.float64)
     list_HAV2=list_HAV[:,13]
@@ -310,8 +298,8 @@ def Evaluation_ramp(list_HAV,scenariotype_path,scenario,scenario_path,safety=50,
                     TTC_HAVi = (List_HAV0[i, 13] - List_HAV0[i, 1]) / (
                                 List_HAV0[i, 5] - List_HAV0[i, 17])
                 else:
-                    TTC_HAVi = (List_HAV0[i, 14] - List_HAV0[i, 2]) / (
-                                List_HAV0[i, 6] - List_HAV0[i, 18])
+                    TTC_HAVi = ((List_HAV0[i, 14] - List_HAV0[i, 2])**2+(List_HAV0[i, 13] - List_HAV0[i, 1])**2)**0.5 / (
+                                abs(List_HAV0[i, 3]) - abs(List_HAV0[i, 15]))
                 TTC_HAV.append(TTC_HAVi)
             if len(TTC_HAV) != 0:
                 mean_TTC = sum(TTC_HAV) / len(TTC_HAV)
@@ -322,53 +310,40 @@ def Evaluation_ramp(list_HAV,scenariotype_path,scenario,scenario_path,safety=50,
 
 
         List_HAVlane = list_HAV2.tolist()  # 驶出行车道扣分
-        lane999_num = List_HAVlane.count(-999)
+        lane999_num = List_HAVlane.count('0.0')
         if lane999_num > 0:
             lane_ornot = 1
             score_safe = score_safe - 50*lane999_num/np.shape(list_HAV)[0]
         score_safe = min(50, score_safe)
         score_safe = max(0, score_safe)
+        out_lane_rate=lane999_num/np.shape(list_HAV)[0]
+        oppo_lane_rate=0
+        run_red=0
+
+
 
    ##效率得分
     HAV = list_HAV[:, 1]
     dest_HAVx = list_HAV[-1, 1]
     dest_HAVy=list_HAV[-1, 2]
+    dest_HAVid=list_HAV2[-1]
     distance_HAV=0
     for i in range(0,np.shape(list_HAV)[0]-1):
         dis=((list_HAV[i+1, 1]-list_HAV[i, 1])**2+(list_HAV[i+1, 2]-list_HAV[i, 2])**2)**0.5
         distance_HAV=distance_HAV+dis
-    time_cost = distance_HAV /11.11
+    time_cost = distance_HAV /33.33
 
-    if scenario_type=="following":
-        if dest_HAVx > destinationx:
-            score_efficiency1 = 10
-            done_ornot = 0
-            distance_todest=0
-        else:
-            score_efficiency1 = 0
-            done_ornot = 1
-            distance_todest=destinationx-dest_HAVx
-    elif scenario_type=="rampin":
-        if dest_HAVx >destinationx and dest_HAVy>destinationy:
-            score_efficiency1 = 10
-            done_ornot = 0
-            distance_todest=0
-        else:
-            score_efficiency1 = 0
-            done_ornot = 1
-            distance_todest = ((destinationx-dest_HAVx)**2+(destinationy-dest_HAVy)**2)**0.5
-    else:##汇出场景需要检查！！
-        if dest_HAVx > destinationx and dest_HAVy > destinationy:
-            score_efficiency1 = 10
-            done_ornot = 0
-            distance_todest = 0
-        else:
-            score_efficiency1 = 0
-            done_ornot = 1
-            distance_todest = ((destinationx - dest_HAVx) ** 2 + (destinationy - dest_HAVy) ** 2) ** 0.5
+    if dest_HAVx >= destinationx  and dest_HAVid==destinationid:
+        score_efficiency1 = 15
+        done_ornot = 0
+        distance_todest = 0
+    else:
+        score_efficiency1 = 0
+        done_ornot = 1
+        distance_todest = ((destinationx - dest_HAVx) ** 2 + (destinationy - dest_HAVy) ** 2) ** 0.5
     #print(dest_HAVx,dest_HAVy,destinationx,destinationy)
     time_cost_HAV = np.shape(HAV)[0] * dt
-    score_efficiency2 = min(20, time_cost / time_cost_HAV * efficiency)
+    score_efficiency2 = min(15, time_cost / time_cost_HAV * 15)
     score_efficiency = min(efficiency, score_efficiency1 + score_efficiency2)
     mean_vy = abs(sum(list_HAV[:, 3]) / len(list_HAV[:, 3]))
 
@@ -382,40 +357,23 @@ def Evaluation_ramp(list_HAV,scenariotype_path,scenario,scenario_path,safety=50,
     UncomfortAAcc_lateralnum=0
     UncomfortDDec_lateralnum=0
     for i in range(0,np.shape(HAV)[0]):
-        if list_HAV2[i]!=zd_id:
-            if list_HAV[i, 7] > 3:
-                UncomfortAccnum+=1
-            if list_HAV[i, 7] < -3:
-                UncomfortDecnum+=1
-            if list_HAV[i,8] > 0.5:
-                UncomfortAcc_lateralnum+=1
-            if list_HAV[i,8]<-0.5:
-                UncomfortDec_lateralnum+=1
-            if list_HAV[i, 9] > 6:
-                UncomfortAAccnum+=1
-            if list_HAV[i, 9] <-6:
-                UncomfortDDecnum+=1
-            if list_HAV[i, 10] > 1:
-                UncomfortAAcc_lateralnum+=1
-            if list_HAV[i, 10] < -1:
-                UncomfortDDec_lateralnum+=1
-        else:
-            if list_HAV[i, 8] > 3:
-                UncomfortAccnum += 1
-            if list_HAV[i, 8] < -3:
-                UncomfortDecnum += 1
-            if list_HAV[i, 7] > 0.5:
-                UncomfortAcc_lateralnum += 1
-            if list_HAV[i, 7] < -0.5:
-                UncomfortDec_lateralnum += 1
-            if list_HAV[i, 10] > 6:
-                UncomfortAAccnum += 1
-            if list_HAV[i, 10] < -6:
-                UncomfortDDecnum += 1
-            if list_HAV[i, 9] > 1:
-                UncomfortAAcc_lateralnum += 1
-            if list_HAV[i, 9] < -1:
-                UncomfortDDec_lateralnum += 1
+        if list_HAV[i, 7] > 3:
+            UncomfortAccnum+=1
+        if list_HAV[i, 7] < -3:
+            UncomfortDecnum+=1
+        if list_HAV[i,8] > 0.5:
+            UncomfortAcc_lateralnum+=1
+        if list_HAV[i,8]<-0.5:
+            UncomfortDec_lateralnum+=1
+        if list_HAV[i, 9] > 6:
+            UncomfortAAccnum+=1
+        if list_HAV[i, 9] <-6:
+            UncomfortDDecnum+=1
+        if list_HAV[i, 10] > 1:
+            UncomfortAAcc_lateralnum+=1
+        if list_HAV[i, 10] < -1:
+            UncomfortDDec_lateralnum+=1
+
 
     Uncomfort_num = UncomfortAccnum +UncomfortDecnum
     Uncomfort_numlateral = UncomfortAcc_lateralnum+UncomfortDec_lateralnum
@@ -471,22 +429,23 @@ def Evaluation_ramp(list_HAV,scenariotype_path,scenario,scenario_path,safety=50,
         mean_DDECy = sum(list_HAV[list_HAV[:, 10] < 0, 10]) / len(list_HAV[list_HAV[:, 10] < 0, 10])
     else:
         mean_DDECy = 0
+    turn_a=0
 
     #分数输出
     if output_type == 'default':
         score = score_safe + score_efficiency + score_comfort
         return ([score,score_safe,score_efficiency,score_comfort])
     elif output_type == 'details':
-        return ( [score_safe + score_efficiency + score_comfort, score_safe, score_efficiency, score_comfort,lane_ornot,done_ornot,distance_todest,mean_TTC,mean_vy,\
-                mean_ACCx,mean_DECx,mean_ACCy,mean_DECy,mean_AACCx,mean_DDECx,mean_AACCy,mean_DDECy])
+        return ( [score_safe + score_efficiency + score_comfort, score_safe, score_efficiency, score_comfort,mean_TTC,oppo_lane_rate,out_lane_rate,run_red,\
+                  done_ornot,mean_vy,distance_todest,\
+                mean_ACCy,mean_DECy,mean_ACCx,mean_DECx,mean_AACCy,mean_DDECy,mean_AACCx,mean_DDECx,turn_a])
     else:
         raise AttributeError("output_type do not accept!")
 
 class Evaluatorzd:
-    def __init__(self,outputs_path,scenario_path,scenariotype_path):
+    def __init__(self,outputs_path,scenario_path):
         self.outputs_path = outputs_path
         self.scenario_path =scenario_path
-        self.scenariotype_path=scenariotype_path
 
     def evaluate(self, output_type='details'):
         all_score = []
@@ -507,7 +466,7 @@ class Evaluatorzd:
             list_HAV=answersheet.values
             #list_HAV = np.array(list_HAV[3:,:])#实车需改动！！！
             list_HAV = np.array(list_HAV)
-            score = Evaluation_ramp(list_HAV,self.scenariotype_path,scenario,scenario_pathdetail,safety=50,efficiency=30,comfort=20,dt=0.1,output_type=output_type)
+            score = Evaluation_ramp(list_HAV,scenario,scenario_pathdetail,safety=50,efficiency=30,comfort=20,dt=0.1,output_type=output_type)
             # print('score', score)
             all_score.append(score)
             all_scenarios.append(scenario)
@@ -520,15 +479,15 @@ class Evaluatorzd:
 if __name__ == '__main__':
     #eva = Evaluatorzd("ramp/实车轨迹/汇出实车_处理","ramp/ramp_out","ramp/scenario_type.csv")
 
-    eva=Evaluatorzd(r"C:\Users\Administrator\Desktop\outputs_1","scenariov2","scenario_type.csv")
+    eva=Evaluatorzd(r"C:\Users\Administrator\Desktop\demo\idm2onsite_demo\outputs_v5",r"C:\Users\Administrator\Desktop\场景及实车轨迹\封硕场景\ramp_scenariov5\final")
     names,score = eva.evaluate()
     print(score)
-    pd.DataFrame(score).to_csv("ramp_results.csv")
+    #pd.DataFrame(score).to_csv("ramp_results.csv")
     df_score = pd.DataFrame(score,
                             columns=['total_score', 'score_safe', 'score_efficiency', 'score_comfort', 'lane_ornot',
                                      'done_ornot', 'distance_todest', 'mean_TTC', 'mean_vy', 'mean_ACCx', 'mean_DECx',
                                      'mean_ACCy', 'mean_DECy', 'mean_AACCx', 'mean_DDECx', 'mean_AACCy', 'mean_DDECy'],
-                            index=names)
+                             index=names)
     df_score.to_csv('ramp_results.csv', header=True, index=True)
 
     # scenario_path = r'D:\PycharmProjects\pythonProject\ramp\scenariov2\2cutin97'
