@@ -46,7 +46,7 @@ class EgoForwardVehicleInfo:
         return combination_array
 
     def ndarray_to_dataframe(self) -> None:
-        if self.front_vehicle_ndarray is not None:
+        if self.front_vehicle_ndarray is not None:####修改成ego
             combination_array = self.merge_ndarray()
             self.ego_front_vehicle_info = pd.DataFrame(combination_array, columns=['time', 'x_ego', 'y_ego', 'v_ego',
                                                                                    'yaw_ego', 'vx_ego', 'vy_ego', 'ax_ego',
