@@ -38,15 +38,20 @@ class SafetyCriteria:
         latter_segment = self.info_table.ego_front_vehicle_info.iloc[
                          self.info_table.first_segment_length + self.info_table.second_segment_length:, :]
         front_segment = front_segment.loc[front_segment['x_pre'] != 10000, :]
-        front_ttc = self.front_segment_ttc(front_segment)
+        front_ttc,front_ttc_all = self.front_segment_ttc(front_segment)
         middle_segment = middle_segment.loc[middle_segment['x_pre'] != 10000, :]
-        middle_ttc = self.middle_segment_ttc(middle_segment)
+        middle_ttc,middle_ttc_all = self.middle_segment_ttc(middle_segment)
         latter_segment = latter_segment.loc[latter_segment['x_pre'] != 10000, :]
-        latter_ttc = self.latter_segment_ttc(latter_segment)
+        latter_ttc,latter_ttc_all = self.latter_segment_ttc(latter_segment)
         self.deducted_score = self.deducted_score + (front_ttc.shape[0] + middle_ttc.shape[0] + latter_ttc.shape[0]) / \
                               self.info_table.ego_front_vehicle_info.shape[0] * 50
         # print(self.deducted_score)
-        return None
+        mean_ttc=0
+        if self.info_table.ego_front_vehicle_info.shape[0]!=0:
+            mean_ttc = (sum(front_ttc_all[front_ttc_all>0]) + sum(middle_ttc_all[middle_ttc_all>0]) + sum(
+                latter_ttc_all[latter_ttc_all>0])) / self.info_table.ego_front_vehicle_info.shape[0]
+            #mean_ttc=(sum(~np.isnan(front_ttc_all))+sum(~np.isnan(middle_ttc_all))+sum(~np.isnan(latter_ttc_all)))/self.info_table.ego_front_vehicle_info.shape[0]
+        return mean_ttc
 
     def front_segment_ttc(self, front_segment: DataFrame) -> Series:
         ttc = None
@@ -57,9 +62,9 @@ class SafetyCriteria:
             ttc = (front_segment['y_pre'].astype(float) - front_segment['y_ego'].astype(float)) / (
                     front_segment['vy_ego'].astype(float) - front_segment['vy_pre'].astype(float))
         ttc = np.array(ttc)
-        ttc = ttc[0 < ttc]
-        ttc = ttc[ttc < 1]
-        return ttc
+        ttc1 = ttc[0 < ttc]
+        ttc1 = ttc1[ttc1 < 1]
+        return ttc1,ttc
 
     def latter_segment_ttc(self, latter_segment: DataFrame) -> Series:
         ttc = None
@@ -72,9 +77,9 @@ class SafetyCriteria:
         else:
             ttc = pd.Series()
         ttc = np.array(ttc)
-        ttc = ttc[0 < ttc]
-        ttc = ttc[ttc < 1]
-        return ttc
+        ttc1 = ttc[0 < ttc]
+        ttc1 = ttc1[ttc1 < 1]
+        return ttc1,ttc
 
     def middle_segment_ttc(self, middle_segment: DataFrame) -> Series:
         ttc = None
@@ -91,9 +96,9 @@ class SafetyCriteria:
             v_diff[v_diff < 0] = 0.000001
             ttc = dis / v_diff
         ttc = np.array(ttc)
-        ttc = ttc[0 < ttc]
-        ttc = ttc[ttc < 1]
-        return ttc
+        ttc1 = ttc[0 < ttc]
+        ttc1 = ttc1[ttc1 < 1]
+        return ttc1,ttc
 
     def penalty_for_outside_road(self, interval=1) -> None:
         front_segment = self.info_table.ego_front_vehicle_info.iloc[0:self.info_table.first_segment_length, :]
@@ -140,17 +145,22 @@ class SafetyCriteria:
                         tolerable_out_num += latter_values[idx]
                     else:
                         un_tolerable_out_num += latter_values[idx]
-        if tolerable_out_num == 0 and un_tolerable_out_num == 0:
-            return None
-        else:
-            self.deducted_score = self.deducted_score + 50 * un_tolerable_out_num/(front_segment.shape[0] + latter_segment.shape[0] + middle_segment.shape[0]) + 25 * tolerable_out_num/(front_segment.shape[0] + latter_segment.shape[0])
-        #if tolerable_out_num>0:
-            #print("驶入对向车道")
-        #if un_tolerable_out_num>0:
-             #print("驶出行车道")
-        return None
+        # if tolerable_out_num == 0 and un_tolerable_out_num == 0:
+        #     return None
+        # else:
+        self.deducted_score = self.deducted_score + 50 * un_tolerable_out_num/(front_segment.shape[0] + latter_segment.shape[0] + middle_segment.shape[0]) + 25 * tolerable_out_num/(front_segment.shape[0] + latter_segment.shape[0])
+        # if tolerable_out_num>0:
+        #     print("驶入对向车道")
+        # if un_tolerable_out_num>0:
+        #     print("驶出行车道")
+
+        oppo_lane_rate=tolerable_out_num/(front_segment.shape[0] + latter_segment.shape[0])
+        out_area_rate=un_tolerable_out_num/(front_segment.shape[0] + latter_segment.shape[0] + middle_segment.shape[0])
+
+        return oppo_lane_rate,out_area_rate
 
     def penalty_for_running_red_light(self) -> None:
+        run_red=0
         x_coordinate = list(self.info_table.ego_front_vehicle_info.loc[:, 'x_ego'])
         y_coordinate = list(self.info_table.ego_front_vehicle_info.loc[:, 'y_ego'])
         coordinate = list(zip(x_coordinate, y_coordinate))
@@ -172,6 +182,7 @@ class SafetyCriteria:
                                     self.info_table.relation_judgement.info.light_info[index + 1] == 'red':
                                 self.deducted_score += 10
                                 #print("闯红灯")
+                                run_red=1
         elif self.info_table.relation_judgement.info.replay_info['travel_direction'][0] == 'E':
             for index, (x, y) in enumerate(coordinate):
                 if (float(x) > float(self.info_table.relation_judgement.info.replay_info['stop_line']['E'][3])) and (
@@ -190,6 +201,7 @@ class SafetyCriteria:
                                     self.info_table.relation_judgement.info.light_info[index + 1] == 'red':
                                 self.deducted_score += 10
                                 #print("闯红灯")
+                                run_red = 1
         elif self.info_table.relation_judgement.info.replay_info['travel_direction'][0] == 'N':
             for index, (x, y) in enumerate(coordinate):
                 if (float(y) > float(self.info_table.relation_judgement.info.replay_info['stop_line']['N'][3])) and (
@@ -208,6 +220,7 @@ class SafetyCriteria:
                                     self.info_table.relation_judgement.info.light_info[index + 1] == 'red':
                                 self.deducted_score += 10
                                 #print("闯红灯")
+                                run_red = 1
         elif self.info_table.relation_judgement.info.replay_info['travel_direction'][0] == 'S':
             for index, (x, y) in enumerate(coordinate):
                 if (float(y) < float(self.info_table.relation_judgement.info.replay_info['stop_line']['S'][3])) and (
@@ -226,9 +239,14 @@ class SafetyCriteria:
                                     self.info_table.relation_judgement.info.light_info[index + 1] == 'red':
                                 self.deducted_score += 10
                                 #print("闯红灯")
-        return None
+                                run_red = 1
+        return run_red
 
     def safety_evaluation(self) -> float:
+        oppo_lane_rate=0
+        out_area_rate=0
+        run_red=0
+        mean_ttc=0
         if self.info_table.ego_front_vehicle_info is None:
             self.deducted_score = 50
         elif self.info_table.ego_front_vehicle_info.loc[
@@ -239,14 +257,12 @@ class SafetyCriteria:
             self.deducted_score = 50
         else:
             self.penalty_for_collision()
-            if self.deducted_score == 50:
-                return self.deducted_score
-            else:
-                self.cal_ttc()
-                self.penalty_for_outside_road()
-                self.penalty_for_running_red_light()
+            if self.deducted_score != 50:
+                mean_ttc=self.cal_ttc()
+                oppo_lane_rate,out_area_rate=self.penalty_for_outside_road()
+                run_red=self.penalty_for_running_red_light()
                 self.deducted_score = np.clip(self.deducted_score, 0, 50)
-        return self.deducted_score
+        return self.deducted_score,mean_ttc,oppo_lane_rate,out_area_rate,run_red
 
 
 if __name__ == "__main__":
