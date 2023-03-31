@@ -321,6 +321,9 @@ def Evaluation(list_HAV,start_destpath,scenario,area=0,safety=50,efficiency=30,c
     start_dest=pd.read_csv(start_destpath)
     start_dest=np.array(start_dest)
     num_scenario=np.shape(start_dest)[0]
+    oppo_lane_rate=0
+    out_lane_rate=0
+    run_red=0
     #file1_path = file_path.split("\\")[-1]
     #scenario = file1_path[0:-9]
     for i in range(0,num_scenario):
@@ -370,7 +373,7 @@ def Evaluation(list_HAV,start_destpath,scenario,area=0,safety=50,efficiency=30,c
         if lane999_num > 0:
             score_safe = score_safe - 50*lane999_num/np.shape(List_HAV)[0]
         out_lane_rate=lane999_num/np.shape(List_HAV)[0]
-        run_red=0
+
 
         #驶入对向车道扣分
         if lanenum==3:
