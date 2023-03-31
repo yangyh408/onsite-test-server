@@ -139,8 +139,11 @@ class ComfortCriteria:
                             self.front_segment.loc[:, 'ax_ego'].astype('float') < 0, 'ax_ego'].astype('float')) + sum(
                 self.latter_segment.loc[
                     self.latter_segment.loc[:, 'ay_ego'].astype('float') < 0, 'ay_ego'].astype('float'))
-        mean_vertical_a=sum_a/self.info_table.ego_front_vehicle_info.shape[0]
-        mean_vertical_d=sum_d/self.info_table.ego_front_vehicle_info.shape[0]
+        mean_vertical_a=0
+        mean_vertical_d=0
+        if self.info_table.ego_front_vehicle_info.shape[0]!=0:
+            mean_vertical_a=sum_a/self.info_table.ego_front_vehicle_info.shape[0]
+            mean_vertical_d=sum_d/self.info_table.ego_front_vehicle_info.shape[0]
         return mean_vertical_a,mean_vertical_d
 
     def penalty_for_horizontal_a(self) -> None:
@@ -256,8 +259,11 @@ class ComfortCriteria:
                             self.front_segment.loc[:, 'ay_ego'].astype('float') < 0, 'ay_ego'].astype('float')) + sum(
                 self.latter_segment.loc[
                     self.latter_segment.loc[:, 'ax_ego'].astype('float') < 0, 'ax_ego'].astype('float'))
-        mean_horizontal_a=sum_a/self.info_table.ego_front_vehicle_info.shape[0]
-        mean_horizontal_d=sum_d/self.info_table.ego_front_vehicle_info.shape[0]
+        mean_horizontal_a=0
+        mean_horizontal_d=0
+        if self.info_table.ego_front_vehicle_info.shape[0]!=0:
+            mean_horizontal_a=sum_a/self.info_table.ego_front_vehicle_info.shape[0]
+            mean_horizontal_d=sum_d/self.info_table.ego_front_vehicle_info.shape[0]
         return mean_horizontal_a,mean_horizontal_d
 
 
@@ -395,8 +401,11 @@ class ComfortCriteria:
                 'float')) + sum(
                 self.latter_segment.loc[
                     self.latter_segment.loc[:, 'aay_ego'].astype('float') < 0, 'aay_ego'].astype('float'))
-        mean_vertical_aa = sum_aa / self.info_table.ego_front_vehicle_info.shape[0]
-        mean_vertical_dd = sum_dd / self.info_table.ego_front_vehicle_info.shape[0]
+        mean_vertical_aa =0
+        mean_vertical_dd=0
+        if self.info_table.ego_front_vehicle_info.shape[0]!=0:
+            mean_vertical_aa = sum_aa / self.info_table.ego_front_vehicle_info.shape[0]
+            mean_vertical_dd = sum_dd / self.info_table.ego_front_vehicle_info.shape[0]
         return mean_vertical_aa, mean_vertical_dd
 
     def penalty_for_horizontal_aa(self) -> None:
@@ -516,8 +525,11 @@ class ComfortCriteria:
                 'float')) + sum(
                 self.latter_segment.loc[
                     self.latter_segment.loc[:, 'aax_ego'].astype('float') < 0, 'aax_ego'].astype('float'))
-        mean_horizontal_aa = sum_aa / self.info_table.ego_front_vehicle_info.shape[0]
-        mean_horizontal_dd = sum_dd / self.info_table.ego_front_vehicle_info.shape[0]
+        mean_horizontal_aa=0
+        mean_horizontal_dd=0
+        if self.info_table.ego_front_vehicle_info.shape[0]!=0:
+            mean_horizontal_aa = sum_aa / self.info_table.ego_front_vehicle_info.shape[0]
+            mean_horizontal_dd = sum_dd / self.info_table.ego_front_vehicle_info.shape[0]
         return mean_horizontal_aa, mean_horizontal_dd
 
 

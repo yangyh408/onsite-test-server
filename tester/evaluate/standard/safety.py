@@ -153,9 +153,12 @@ class SafetyCriteria:
         #     print("驶入对向车道")
         # if un_tolerable_out_num>0:
         #     print("驶出行车道")
-
-        oppo_lane_rate=tolerable_out_num/(front_segment.shape[0] + latter_segment.shape[0])
-        out_area_rate=un_tolerable_out_num/(front_segment.shape[0] + latter_segment.shape[0] + middle_segment.shape[0])
+        oppo_lane_rate =0
+        out_area_rate=0
+        if (front_segment.shape[0] + latter_segment.shape[0])!=0:
+            oppo_lane_rate=tolerable_out_num/(front_segment.shape[0] + latter_segment.shape[0])
+        if (front_segment.shape[0] + latter_segment.shape[0] + middle_segment.shape[0])!=0:
+            out_area_rate=un_tolerable_out_num/(front_segment.shape[0] + latter_segment.shape[0] + middle_segment.shape[0])
 
         return oppo_lane_rate,out_area_rate
 
