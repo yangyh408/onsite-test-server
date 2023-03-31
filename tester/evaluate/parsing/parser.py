@@ -114,6 +114,7 @@ class Parser:
         """
         trajectory_frame = pd.read_csv(csv_file_path)
         trajectory_frame.rename(columns={"Unnamed: 0": "t"}, inplace=True)
+
         # 准备add_settings需要的信息
         scenario_name = os.path.basename(csv_file_path)[:-11]
         t = list(np.array(trajectory_frame['t']))
@@ -204,12 +205,15 @@ class Parser:
         end_x = self.info.trajectory_info['ego']['x'][-1]
         end_y = self.info.trajectory_info['ego']['y'][-1]
         end_point = shapely.geometry.Point(end_x, end_y)
+        #print(start_x,start_y,end_x,end_y)
         # print(start_point.coords.xy)
         for key in self.info.zone.keys():
             if self.info.zone[key].intersects(start_point):
+                #print(self.info.zone[key])
                 # print('------------------------------')
                 if key[-1] == 'I':
                     self.info.replay_info['travel_direction'].append(key[0])
+
         if len(self.info.replay_info['travel_direction']) != 1:
             raise ValueError('场景{0}存在问题'.format(self.info.replay_info["scenario_name"]))
         for key in self.info.zone.keys():
@@ -220,12 +224,19 @@ class Parser:
                     self.info.replay_info['travel_direction'].append(key)
                 elif key[-1] == 'I':
                     self.info.replay_info['travel_direction'].append(key[0])
+
         if len(self.info.replay_info['travel_direction']) == 1:
+
             self.info.replay_info['travel_direction'].append(
                 self.info.replay_info['target_travel_direction'][1]
             )  # 这里是说，如果最后一个点时，规控器失效的话，轨迹点可能不在任何一个区域中，而在其他地方，这时另行驶方向与目标行驶方向一致
         if len(self.info.replay_info['travel_direction']) != 2:
+            self.info.replay_info['travel_direction'].remove('IN')
+            self.info.replay_info['travel_direction'] = self.info.replay_info['travel_direction'][:2]
+        if len(self.info.replay_info['travel_direction']) != 2:
             raise ValueError('场景{0}存在问题'.format(self.info.replay_info["scenario_name"]))
+
+        #print(self.info.replay_info['target_travel_direction'])
         return
 
     def judge_stop_line(self) -> None:
@@ -313,18 +324,18 @@ class Parser:
         return stop_line_list
 
     def judge_evaluation_system(self, scenario_path: str) -> None:
-        # 优先读取场景来源，目前只有highd和NDS两种来源（且NDS的来源为空），后续增加新场景库后，再补充
+        # 优先读取场景来源，目前只有highway和NDS两种来源（且NDS的来源为空），后续增加新场景库后，再补充
         scenario_source = self.open_drive_xml.header.name
         # 根据场景来源分析场景类型（场景类型主要用于判断使用哪种评价体系）
-        if scenario_source == "highD":
+        if scenario_source in ['highD', 'highway']:
             self.info.replay_info['scenario_source'] = scenario_source
-            # print('{0}场景来源于highd数据集，使用高速公路评价体系'.format(self.info.replay_info['scenario_name']))
+            #print('{0}场景来源于highway数据集，使用高速公路评价体系'.format(self.info.replay_info['scenario_name']))
             self.info.replay_info['evaluation_type'] = 'scheme_one'
             pass
         elif scenario_source == "":
             self.info.replay_info['scenario_source'] = "NDS"
             if not self.open_drive_xml.junctions:
-                # print('{0}场景来源于NDS数据集，其中不存在交叉口场景，使用高速公路评价体系'.format(self.info.replay_info['scenario_name']))
+                #print('{0}场景来源于NDS数据集，其中不存在交叉口场景，使用高速公路评价体系'.format(self.info.replay_info['scenario_name']))
                 self.info.replay_info['evaluation_type'] = 'scheme_one'
                 pass
             else:
@@ -336,10 +347,10 @@ class Parser:
                 if self.info.replay_info['target_travel_direction'].count(
                         self.info.replay_info['target_travel_direction'][0]) == len(
                     self.info.replay_info['target_travel_direction']):
-                    # print('{0}场景来源于NDS数据集，存在交叉口，车辆的目标行驶轨迹并未通过交叉口，使用高速公路评价体系'.format(self.info.replay_info['scenario_name']))
+                    #print('{0}场景来源于NDS数据集，存在交叉口，车辆的目标行驶轨迹并未通过交叉口，使用高速公路评价体系'.format(self.info.replay_info['scenario_name']))
                     self.info.replay_info['evaluation_type'] = "scheme_one"
                 else:
-                    # print("{0}场景来源于NDS数据集，存在交叉口，车辆的目标行驶轨迹通过交叉口，使用交叉口评价体系".format(self.info.replay_info['scenario_name']))
+                    #print("{0}场景来源于NDS数据集，存在交叉口，车辆的目标行驶轨迹通过交叉口，使用交叉口评价体系".format(self.info.replay_info['scenario_name']))
                     self.info.replay_info['evaluation_type'] = "scheme_two"
                     self.parse_JSON(scenario_path)
                     self.get_each_zone_polygon()
@@ -347,7 +358,7 @@ class Parser:
         elif scenario_source == "SinD":
             self.info.replay_info['scenario_source'] = "SinD"
             if not self.open_drive_xml.junctions:
-                # print('{0}场景来源于SinD数据集，其中不存在交叉口场景，使用高速公路评价体系'.format(
+                #print('{0}场景来源于SinD数据集，其中不存在交叉口场景，使用高速公路评价体系'.format(
                     # self.info.replay_info['scenario_name']))
                 self.info.replay_info['evaluation_type'] = 'scheme_one'
                 pass
@@ -360,13 +371,13 @@ class Parser:
                 if self.info.replay_info['target_travel_direction'].count(
                         self.info.replay_info['target_travel_direction'][0]) == len(
                     self.info.replay_info['target_travel_direction']):
-                    # print(
-                    #     '{0}场景来源于SinD数据集，存在交叉口，车辆的目标行驶轨迹并未通过交叉口，使用高速公路评价体系'.format(
-                    #         self.info.replay_info['scenario_name']))
+                    #print(
+                        # '{0}场景来源于SinD数据集，存在交叉口，车辆的目标行驶轨迹并未通过交叉口，使用高速公路评价体系'.format(
+                        #     self.info.replay_info['scenario_name']))
                     self.info.replay_info['evaluation_type'] = "scheme_one"
                 else:
-                    # print("{0}场景来源于SinD数据集，存在交叉口，车辆的目标行驶轨迹通过交叉口，使用交叉口评价体系".format(
-                    #     self.info.replay_info['scenario_name']))
+                    #print("{0}场景来源于SinD数据集，存在交叉口，车辆的目标行驶轨迹通过交叉口，使用交叉口评价体系".format(
+                        # self.info.replay_info['scenario_name']))
                     self.info.replay_info['evaluation_type'] = "scheme_two"
                     self.parse_JSON(scenario_path)
                     self.get_each_zone_polygon()
@@ -374,12 +385,12 @@ class Parser:
             pass
         elif scenario_source == "NDS_ramp":
             self.info.replay_info['scenario_source'] = "NDS_ramp"
-            # print('{0}场景来源于NDS数据集，使用汇入汇出体系'.format(self.info.replay_info['scenario_name']))
+            #print('{0}场景来源于NDS数据集，使用汇入汇出体系'.format(self.info.replay_info['scenario_name']))
             self.info.replay_info['evaluation_type'] = 'scheme_three'
             pass
         else:
             self.info.replay_info['scenario_source'] = scenario_source
-            # print("{0}场景来源于{1}数据集，使用其他评价体系".format(self.info.replay_info['scenario_name'], scenario_source))
+            #print("{0}场景来源于{1}数据集，使用其他评价体系".format(self.info.replay_info['scenario_name'], scenario_source))
             self.info.replay_info['evaluation_type'] = "scheme_four"
             pass
         return
