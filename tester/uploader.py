@@ -1,48 +1,45 @@
 import os
+import time
 import shutil
 import zipfile
 
 import upyun
-from logger import debugger, logger
+from test_status import listen
 
 class Uploader:
-    def __init__(self, zip_dir, submitId):
-        self.remote_dir = r"/results/"
-        self.zip_file_name = None
-        
-        self.zip_file_dir = zip_dir
-        self.submitId = submitId
-        
+    def __init__(self, output_root_dir, submit_info):
+        self.zip_file_name = self._update_zip_file_name(submit_info['submitterId'], submit_info['submitTime'])
+        self.zip_file_path = os.path.join(output_root_dir, self.zip_file_name)
+        self.output_dir = os.path.join(output_root_dir, submit_info['submitId'])
+        self.remote_dir = rf"/results/{submit_info['competitionId']}/"
         
     def _connect(self, username = "zhouhuajun", password = "q9ieC21p1yRaHYGqFo0N5x7OoedsDVla"):
         self.up = upyun.UpYun('onsite', username=username, password=password, endpoint=upyun.ED_AUTO)
     
-    @debugger('cls')
-    def upload(self, competitionid, userid, submit_time, output_path):
-        # print('  - [Upload] Uploading: ')
-        try:
-            self._connect()
-            self._update_remote_dir(competitionid)
-            self._update_zip_file_name(userid, submit_time)
-
-            self._zip_dir(output_path, os.path.join(self.zip_file_dir, self.zip_file_name))
-            self._upload_score()
-
-            self._delete_file(os.path.join(self.zip_file_dir, self.zip_file_name))
-            # print('  - [Upload] Done!')
-            shutil.rmtree(output_path)
-            return 'https://resource.onsite.run' + self.remote_dir + self.zip_file_name
-        except Exception as e:
-            logger.exception(f"[UPLOAD ERROR]:{repr(e)}", extra={'submitId': self.submitId})
-            return None
+    def upload(self):
+        retry_times = 10
+        while retry_times := retry_times - 1:
+            upload_listen, _ = self._upload_file()
+            if upload_listen['status'] == 'SUCCESS':
+                break
+            else:
+                time.sleep(5)
+        
+        if upload_listen['status'] == 'SUCCESS':
+            self._delete_file(self.zip_file_path)
+            # shutil.rmtree(self.output_dir)
+            return upload_listen, 'https://resource.onsite.run' + self.remote_dir + self.zip_file_name
+        else:
+            return upload_listen, None
     
-    def _update_remote_dir(self, dirname):
-        self.remote_dir += rf"{dirname}/"
+    @listen
+    def _upload_file(self):
+        self._connect()
+        self._zip_dir(self.output_dir, self.zip_file_path)
+        self._to_upyun(self.zip_file_path)
 
     def _update_zip_file_name(self, userid, submit_time):
-        self.zip_file_name = f"{userid}&{submit_time}.zip"
-        self.zip_file_name = self.zip_file_name.replace(":", "-")
-        self.zip_file_name = self.zip_file_name.replace(" ", "_")
+        return f"{userid}&{submit_time}.zip".replace(":", "-").replace(" ", "_")
 
     def _zip_dir(self, output_path, zip_file):
         # print(f"    --> zipping: {output_path} -zip-> {zip_file}")
@@ -53,9 +50,8 @@ class Uploader:
                 zip.write(os.path.join(path, filename), os.path.join(fpath, filename))
         zip.close()
 
-    def _upload_score(self):
-        # print(f"    --> to_upyun: {self.remote_dir + self.zip_file_name}")
-        with open(os.path.join(self.zip_file_dir, self.zip_file_name), 'rb') as f:
+    def _to_upyun(self, zip_file):
+        with open(zip_file, 'rb') as f:
             self.up.put(self.remote_dir + self.zip_file_name, f, checksum=True)
     
     def _delete_file(self, file_name):
@@ -64,11 +60,14 @@ class Uploader:
 
 
 if __name__ == "__main__":
-    output_path = r"/media/yangyh408/YangYH408/test_scenario/outputs"
-    uploader = Uploader(output_path)
-    competitionid = "test_exam_1"
-    userid = "yangyh408"
-    submit_time = "2023-03-04 22:24:26"
-    uploader.upload(competitionid, userid, submit_time)
-    # uploader._zip_res(output_path, r"C:\Users\89525\Desktop\test_zip.zip")
-    # uploader._upload_score(r"C:\Users\89525\Desktop\test_zip.zip")
+    BASEDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    INPUT_ROOT_DIR = os.path.join(BASEDIR, 'scenes')
+    OUTPUT_DIR = os.path.join(BASEDIR, 'temp')
+    ERROR_LOG_DIR = os.path.join(BASEDIR, 'log/error_log')
+    
+    from tester import Tester
+    test_module = Tester(OUTPUT_DIR, ERROR_LOG_DIR)
+    for submit_info in test_module.db.get_submits(submitId='s_20230331080127_20230307123639'):
+        uploader = Uploader(test_module.output_root_dir, submit_info)
+        print(uploader.upload())
+        # test_module.test(r"/home/ubuntu/onsite-test-server/scenes/A/test/inputs", submit_info)

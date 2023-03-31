@@ -2,23 +2,20 @@ import os
 import shutil
 import datetime
 
+from test_status import TestStatus
+from connector import Connector
 from docker_tool import DockerTool
 from uploader import Uploader
 from run_evaluator import RunEvaluator
 
 class Tester():
-    def __init__(self, input_dir: str, output_dir: str) -> None:
-        self.input_dir = os.path.abspath(input_dir)
+    def __init__(self, output_dir: str, error_log_dir: str) -> None:
         self.output_root_dir = os.path.abspath(output_dir)
-        self.run_status = {
-            'pull': None,
-            'test': None,
-            'evaluate': None,
-            'upload': None,
-            'errMsg': None,
-        }
+        self.error_log_dir = os.path.abspath(error_log_dir)
+        
+        self.db = Connector()
 
-    def test(self, submit_info: dict) -> dict:
+    def test(self, input_dir: str, submit_info: dict) -> dict:
         """
             根据dockerid进行测试，并返回该轮测试评分，流程为：
                 1. docker处理： 拉取镜像、运行测试
@@ -39,15 +36,31 @@ class Tester():
                 'testTime': 测试时间
                 'resultLink': outputs文件夹又拍云下载链接（仅在status为SUCCESS的情况下有值，否则为None）
         """
+        self.db.update(table = 'submit', info = {"status": "TESTING", "testTime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}, logic = 'AND', submitId = submit_info['submitId'])
+        
         output_dir = os.path.join(self.output_root_dir, submit_info['submitId'])
         self._reset_dir(output_dir)
-        # print("Run testing:")
-        # print(f"  - [config]: {submit_info['competitionId']}-{submit_info['submitterId']}-{submit_info['submitTime']}-{submit_info['dockerId']}")
         
-        docker = DockerTool(self.input_dir, output_dir, submit_info['submitId'])
-        docker_status = docker.run(submit_info['dockerId'])
+        test_status = TestStatus(self.error_log_dir, submit_info['submitId'], self.db)
+        docker = DockerTool(input_dir, output_dir)
         
-        uploader = Uploader(self.output_root_dir, submit_info['submitId'])
+        test_status.update('pull')
+        pull_listen, (docker_status, pull_error) = docker._pull_docker(submit_info['dockerId'])
+        if docker_status == 'SUCCESS': 
+            test_status.update('pull', pull_listen)
+            test_status.update('test')
+            test_listen, (docker_status, test_error) = docker._test_docker(submit_info['dockerId'])
+            if docker_status != 'SUCCESS':
+                test_listen['status'] = 'ERROR'
+                test_listen['error_msg'] = test_error
+            test_status.update('test', test_listen)
+            docker._delete_image(submit_info['dockerId'])
+        else:
+            pull_listen['status'] = 'ERROR'
+            pull_listen['error_msg'] = pull_error
+            test_status.update('pull', pull_listen)
+
+        uploader = Uploader(self.output_root_dir, submit_info)
 
         if docker_status == 'SUCCESS':
             evaluator = RunEvaluator(submit_info['submitId'], save_record = True)
@@ -81,3 +94,18 @@ class Tester():
         else:
             shutil.rmtree(file_path)
             os.mkdir(file_path)
+            
+            
+if __name__ == '__main__':
+    BASEDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    INPUT_ROOT_DIR = os.path.join(BASEDIR, 'scenes')
+    OUTPUT_DIR = os.path.join(BASEDIR, 'temp')
+    ERROR_LOG_DIR = os.path.join(BASEDIR, 'log/error_log')
+
+    test_module = Tester(OUTPUT_DIR, ERROR_LOG_DIR)
+    for submit_info in test_module.db.get_submits(submitId='s_20230331080127_20230307123639'):
+        test_module.test(r"/home/ubuntu/onsite-test-server/scenes/A/test/inputs", submit_info)
+    # import json
+    # a = json.loads(test_module.db._get_value(table='submit', field='testDetail', logic='AND', submitId='s_20230331080127_20230307123639')[0][0])
+    # print(a)
+    # print(a['pull'])

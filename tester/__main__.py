@@ -1,7 +1,5 @@
 from concurrent.futures import ProcessPoolExecutor
-import datetime
 import os
-from connector import Connector
 from tester import Tester
 from logger import logger, print_logger
 from load_conf import load_conf
@@ -12,16 +10,17 @@ competition_info = load_conf()
 BASEDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 INPUT_ROOT_DIR = os.path.join(BASEDIR, 'scenes')
 OUTPUT_DIR = os.path.join(BASEDIR, 'temp')
+ERROR_LOG_DIR = os.path.join(BASEDIR, 'log/error_log')
 
-db = Connector()
 pool = ProcessPoolExecutor()
+test_module = Tester(OUTPUT_DIR, ERROR_LOG_DIR)
         
 def run_tester(submit_info, input_dir):
     try:
-        db.update(table = 'submit', info = {"status": "TESTING", "testTime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}, logic = 'AND', submitId = submit_info['submitId'])
-        test_module = Tester(input_dir, OUTPUT_DIR)
+        # db.update(table = 'submit', info = {"status": "TESTING", "testTime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}, logic = 'AND', submitId = submit_info['submitId'])
+        test_module = Tester(input_dir, OUTPUT_DIR, db)
         result = test_module.test(submit_info)
-        db.update(table = 'submit', info = result, logic = 'AND', submitId = submit_info['submitId'])
+        # db.update(table = 'submit', info = result, logic = 'AND', submitId = submit_info['submitId'])
         logger.info(f"{result}", extra={'submitId': submit_info['submitId']})
     except Exception as e:
         logger.exception(f"[CRITICAL]: run_tester collapse for submit:{submit_info}", extra={'submitId': submit_info['submitId']})

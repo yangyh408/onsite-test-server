@@ -1,15 +1,14 @@
 import os
 import shlex
 import subprocess
-from logger import debugger, logger
+from test_status import listen
 
 class DockerTool:
-    def __init__(self, input_path, output_path, submitId):
+    def __init__(self, input_path, output_path):
         self.input_path = input_path
         self.output_path = output_path
-        self.submitId = submitId
     
-    def run(self, docker_id: str, pull=True) -> str:
+    def run(self, docker_id: str) -> str:
         """
             测试docker_id对应的镜像
         Args:
@@ -22,16 +21,25 @@ class DockerTool:
                  "Pull error" -> 拉取镜像失败
                  "Container error" -> 被测物测试时出错
         """
-        if pull:
-            status = self._pull_docker(docker_id)
-        if status == 'SUCCESS': 
-            status = self._test_docker(docker_id)
+        docker_listen = {}
+        pull_listen, (res, pull_error) = self._pull_docker(docker_id)
+        if res == 'SUCCESS': 
+            test_listen, (res, test_error) = self._test_docker(docker_id)
+            if res != 'SUCCESS':
+                test_listen['status'] = 'ERROR'
+                test_listen['error_msg'] = test_error
+            docker_listen['test'] = test_listen
             self._delete_image(docker_id)
-        return status
+        else:
+            pull_listen['status'] = 'ERROR'
+            pull_listen['error_msg'] = pull_error
+        docker_listen['pull'] = pull_listen
+        return docker_listen, res
 
-    @debugger('cls')
+    @listen
     def _pull_docker(self, docker_id: str) -> str:
         res = 'SUCCESS'
+        stderr = ''
         # print("  - [Pull] Pulling: ", docker_id)
         command = f"docker pull {docker_id}"
         result = self._run_command(command)
@@ -41,22 +49,23 @@ class DockerTool:
                 res = 'IMAGE NOT FOUND'
             else:
                 res = 'PULL ERROR'
-            logger.error(f"[{res}]:\n{(stderr).strip()}", extra={'submitId': self.submitId})
+            # logger.error(f"[{res}]:\n{(stderr).strip()}", extra={'submitId': self.submitId})
             with open(os.path.join(self.output_path, 'error.txt'), 'w') as f:
                 f.write(str(stderr))
         # print(f"  - [Pull] Done with status '{res}'")
-        return res
+        return res, stderr
 
-    @debugger('cls')
+    @listen
     def _test_docker(self, docker_id: str) -> str:
         res = 'SUCCESS'
+        stderr = ''
         # print('  - [Test] Testing: ', docker_id)
         command = f"docker run --volume {self.input_path}:/inputs --volume {self.output_path}:/outputs {docker_id}"
         result = self._run_command(command)
         if result.returncode != 0:
             stderr = result.stderr.decode()
             res = "CONTAINER ERROR"
-            logger.error(f"[{res}]:\n{(stderr).strip()}", extra={'submitId': self.submitId})
+            # logger.error(f"[{res}]:\n{(stderr).strip()}", extra={'submitId': self.submitId})
             with open(os.path.join(self.output_path, 'error.txt'), 'w') as f:
                 f.write(stderr)
         else:
@@ -64,21 +73,22 @@ class DockerTool:
             with open(os.path.join(self.output_path, 'container_logs.txt'), 'w') as f:
                 f.write(stdout)
         # print(f"  - [Test] Done with status '{res}'")
-        return res
+        return res, stderr
     
     def _delete_image(self, docker_id: str) -> str:
         command = f"docker rmi -f {docker_id}"
         result = self._run_command(command)
         if result.returncode != 0:
             stderr = result.stderr.decode()
-            logger.error(f"[DELETE IMAGE FAIL]:\n{(stderr).strip()}", extra={'submitId': self.submitId})
+            # logger.error(f"[DELETE IMAGE FAIL]:\n{(stderr).strip()}", extra={'submitId': self.submitId})
     
     def _run_command(self, command: str):
         return subprocess.run(shlex.split(command), capture_output=True)
 
 if __name__ == '__main__':
-    input_path = r"/media/yangyh408/YangYH408/test_scenario/inputs"
-    output_path = r"/media/yangyh408/YangYH408/onsite-develop/onsite-test-server/temp"
+    input_path = r"/home/ubuntu/onsite-test-server/scenes/A/test/inputs"
+    output_path = r"/home/ubuntu/onsite-test-server/temp/test_docker_outputs"
     d = DockerTool(input_path, output_path)
-    d.run("huangyan520/test-image-for-onsite:0.1.6")
+    print(d.run("huangyan520/test-image-for-onsite:0.1.6"))
+    print(d.run("123456"))
 

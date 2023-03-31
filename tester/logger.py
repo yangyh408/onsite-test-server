@@ -53,17 +53,4 @@ def debugger(t='cls'):
                 logger.debug(f"{'':>12s}::{func.__name__:<12s} |cost:{(time.time()-t):.2f}s| Return: {result}")
                 return result
             return wrapper
-        
-        
-# class DebugLogger():
-#     def __init__(self, func):
-#         self.func = func
-#         self.logger = logging.getLogger()
-
-#     def __call__(self, *args, **kwargs):
-#         self.logger.warn(f"{self.func.__name__} {self.func.__module__}")
-#         t = time.time()
-#         result = self.func(*args, **kwargs)
-#         self.logger.warn(f"({(time.time()-t):.2f}s)Return: {result}")
-#         return result
         return func_debugger
