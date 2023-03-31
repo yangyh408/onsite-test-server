@@ -47,7 +47,7 @@ def evaluating_multiple_scenarios(trajectory_path: str, scenario_path: str, inte
         # sgimport.set_global_icon(filename='onsite.png')
         # sgimport.one_line_progress_meter("评价进度", i , len(trajectory_list), orientation='h',button_color=('black','lightgrey'))
         if item[0] != '.' and  '_result.csv' in item:
-            all_scenario.append(item.split('_')[0])
+            all_scenario.append(item[:-11])
     # with tqdm(total=len(all_scenario)) as _tqdm:
     for scenario in all_scenario:
         # _tqdm.set_description(f"--> scene<{scenario}>")    
@@ -140,7 +140,7 @@ def evaluating_multiple_scenarios(trajectory_path: str, scenario_path: str, inte
             # list_HAV = np.array(list_HAV[3:,:])#实车轨迹存在误差，需用这个改动
             list_HAV = np.array(list_HAV)
             score = Evaluation_ramp(list_HAV, scenario, scenario_path_detail, safety=50, \
-                                    efficiency=30, comfort=20, dt=0.1, output_type="default")
+                                    efficiency=30, comfort=20, dt=0.1, output_type="details")
             safetyscore = float(format(score[1], '.2f'))
             efficiencyscore = float(format(score[2], '0.2f'))
             comfortscore = round(score[3], 2)

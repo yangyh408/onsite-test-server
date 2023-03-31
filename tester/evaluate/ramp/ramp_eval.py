@@ -169,7 +169,7 @@ def write_answersheet_ramp(outputs_path,scenario_path):
         laneid_nonego = pd.DataFrame(laneid_nonego)
         nonego = pd.concat([nonego, laneid_nonego], axis=1)
     #print(nonego)
-    nonego.to_csv("nonego.csv")
+    #nonego.to_csv("nonego.csv")
 
     nonego = nonego.values.tolist()
     pre_x = []
@@ -285,6 +285,9 @@ def Evaluation_ramp(list_HAV,scenario,scenario_path,safety=50,efficiency=30,comf
     mean_TTC = 0
     lane_ornot = 0
     TTC_HAV=[]
+    out_lane_rate = 0
+    oppo_lane_rate = 0
+    run_red = 0
     if (2 in reward) or (3 in reward):  # 碰撞0分
         score_safe = 0
     else:
