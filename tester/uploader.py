@@ -37,7 +37,8 @@ class Uploader:
         self._zip_dir(self.output_dir, self.zip_file_path)
         self._to_upyun(self.zip_file_path)
         self._delete_file(self.zip_file_path)
-        shutil.rmtree(self.output_dir)
+        # shutil.rmtree(self.output_dir)
+        os.system(f"sudo rm -rf {self.output_dir}")
 
     def _update_zip_file_name(self, userid, submit_time):
         return f"{userid}&{submit_time}.zip".replace(":", "-").replace(" ", "_")

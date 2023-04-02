@@ -77,7 +77,8 @@ class Tester():
         if not os.path.exists(file_path):
             os.mkdir(file_path)
         else:
-            shutil.rmtree(file_path)
+            # shutil.rmtree(file_path)
+            os.system(f"sudo rm -rf {file_path}")
             os.mkdir(file_path)
             
             
