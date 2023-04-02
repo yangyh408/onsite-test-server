@@ -25,22 +25,23 @@ def listen(func):
     return wrapper
 
 class TestStatus:
-    def __init__(self, record_dir, submitId, database):
+    def __init__(self, record_dir, submitId, pid, database):
         self.error_path = os.path.join(record_dir, "error.txt")
         self.submitId = submitId
         self.database = database
         self.record = {
-            'pull': {'status': 'WAITING', 'cost': -1},
-            'test': {'status': 'WAITING', 'cost': -1},
-            'evaluate': {'status': 'WAITING', 'cost': -1},
-            'upload': {'status': 'WAITING', 'cost': -1},
+            'pid': pid,
+            'pull': {'status': 'WAITING', 'cost': ''},
+            'test': {'status': 'WAITING', 'cost': ''},
+            'evaluate': {'status': 'WAITING', 'cost': ''},
+            'upload': {'status': 'WAITING', 'cost': ''},
         }
         self._update_database()
         
     def update(self, module, listen_result=None):
         if listen_result:
             self.record[module]['status'] = listen_result['status']
-            self.record[module]['cost'] = listen_result['cost']
+            self.record[module]['cost'] = f"{listen_result['cost']:.2f}"
             if listen_result['error_msg']:
                 with open(self.error_path, 'a') as f:
                     f.write(listen_result['error_msg'])

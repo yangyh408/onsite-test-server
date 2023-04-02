@@ -1,6 +1,5 @@
 import os
 import shutil
-import datetime
 
 from test_status import TestStatus
 from connector import Connector
@@ -36,14 +35,12 @@ class Tester():
                 'testTime': 测试时间
                 'resultLink': outputs文件夹又拍云下载链接（仅在status为SUCCESS的情况下有值，否则为None）
         """
-        self.db.update(table = 'submit', info = {"status": "TESTING", "testTime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}, logic = 'AND', submitId = submit_info['submitId'])
-        
         output_dir = os.path.join(self.output_root_dir, submit_info['submitId'])
         record_dir = os.path.join(self.record_root_dir, submit_info['submitId'])
         self._reset_dir(output_dir)
         self._reset_dir(record_dir)
         
-        test_status = TestStatus(record_dir, submit_info['submitId'], self.db)
+        test_status = TestStatus(record_dir, submit_info['submitId'], os.getpid(), self.db)
         
         docker = DockerTool(input_dir, output_dir)
         docker_status = docker.run(submit_info['dockerId'], test_status)
@@ -66,8 +63,6 @@ class Tester():
         else:
             upyun_link = uploader.upload(test_status)
             result = self._result(docker_status, None, upyun_link)
-            
-        self.db.update(table = 'submit', info = result, logic = 'AND', submitId = submit_info['submitId'])
         return result
     
     def _result(self, status, score, resultLink):

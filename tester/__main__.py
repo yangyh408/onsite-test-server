@@ -1,5 +1,6 @@
 from concurrent.futures import ProcessPoolExecutor
 import os
+import datetime
 from tester import Tester
 from logger import logger, print_logger
 from load_conf import load_conf
@@ -17,7 +18,9 @@ test_module = Tester(OUTPUT_DIR, RECORD_DIR)
         
 def run_tester(submit_info, input_dir):
     try:
-        test_module.test(input_dir, submit_info)
+        test_module.db.update(table = 'submit', info = {"status": "TESTING", "testTime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}, logic = 'AND', submitId = submit_info['submitId'])
+        result = test_module.test(input_dir, submit_info)
+        test_module.db.update(table = 'submit', info = result, logic = 'AND', submitId = submit_info['submitId'])
     except Exception as e:
         logger.exception(f"[CRITICAL]: run_tester collapse for submit:{submit_info}", extra={'submitId': submit_info['submitId']})
     # finally:
