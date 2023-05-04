@@ -358,7 +358,7 @@ def Evaluation(list_HAV,start_destpath,scenario,area=0,safety=50,efficiency=30,c
         if np.shape(List_HAV0)[0] == 0:
             score_safe = 50
         else:  # TTC<1扣分
-            if min(abs(List_HAV0[:, 14] - List_HAV0[:, 1])) > 5:
+            #if min(abs(List_HAV0[:, 14] - List_HAV0[:, 1])) > 5:
                 TTC_HAV = (List_HAV0[:, 14] - List_HAV0[:, 1]) / (
                             List_HAV0[:, 5] - List_HAV0[:, 18])
                 TTC_HAV = TTC_HAV[TTC_HAV > 0]
@@ -366,8 +366,8 @@ def Evaluation(list_HAV,start_destpath,scenario,area=0,safety=50,efficiency=30,c
                     mean_TTC = sum(TTC_HAV) / len(TTC_HAV)
                 TTC_HAV = TTC_HAV[TTC_HAV < 1]
                 score_safe = safety - np.shape(TTC_HAV)[0] / np.shape(List_HAV)[0] * safety
-            else:
-                score_safe = 0
+            #else:
+                #score_safe = 0
         List_HAVlane = List_HAV[:, 13].tolist()  # 驶出行车道扣分
         lane999_num = List_HAVlane.count(-999)
         if lane999_num > 0:
