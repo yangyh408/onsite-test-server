@@ -5,10 +5,10 @@ block_cipher = None
 
 
 a = Analysis(
-    ['evaluator.py'],
-    pathex=['/media/yangyh408/YANGYH408/evaluator_exe'],
+    ['evaluator_linuxtool.py'],
+    pathex=['/media/yangyh408/YangYH408/onsite-test-server/tester/evaluate'],
     binaries=[],
-    datas=[('/media/yangyh408/YANGYH408/evaluator_exe/server_v3', './server_v3'), ('/media/yangyh408/YANGYH408/evaluator_exe/ramp', './ramp')],
+    datas=[('/media/yangyh408/YangYH408/onsite-test-server/tester/evaluate/server_v3', './server_v3'), ('/media/yangyh408/YangYH408/onsite-test-server/tester/evaluate/ramp', './ramp')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
