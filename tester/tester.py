@@ -14,7 +14,7 @@ class Tester():
         
         self.db = Connector()
 
-    def test(self, input_dir: str, submit_info: dict) -> dict:
+    def test(self, input_dir: str, submit_info: dict, core_num: int) -> dict:
         """
             根据dockerid进行测试，并返回该轮测试评分，流程为：
                 1. docker处理： 拉取镜像、运行测试
@@ -42,7 +42,7 @@ class Tester():
         
         test_status = TestStatus(record_dir, submit_info['submitId'], os.getpid(), self.db)
         
-        docker = DockerTool(input_dir, output_dir)
+        docker = DockerTool(input_dir, output_dir, core_num)
         docker_status = docker.run(submit_info['dockerId'], test_status)
         
         uploader = Uploader(self.output_root_dir, submit_info)

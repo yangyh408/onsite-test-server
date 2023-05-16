@@ -7,7 +7,7 @@ from logger import db_logger
 HOSTNAME = "sh-cynosdbmysql-grp-lqu1mnle.sql.tencentcdb.com"
 PORT = 23574
 USERNAME = "root"
-PASSWORD = "Ljq20020717"
+PASSWORD = "SZdGuvr8vcEWR9pCvkaWNsr2"
 DATABASE = "onsite"
 
 class Connector():
@@ -157,23 +157,9 @@ def db_insert(connector, *, user, dockerid, competition):
     return True, submit_info
     
 if __name__ == '__main__':
+    from load_conf import load_conf
+    comp = load_conf()
     c = Connector()
-    # submit_info = {
-    #     'submitId': 'test1',
-    #     'submitterId': 'test_user1',
-    #     'competitionId': 'com1',
-    #     'submitTime': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-    #     'dockerId': 123
-    # }
-    # print(c.insert('submit', submit_info))
-    # import datetime
-    # update_info = {
-    #     'score': 12.34,
-    #     'testTime': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-    #     'resultLink': None,
-    # }
-    # print(c.update(table = 'submit', info = update_info, logic = 'AND', submitId = 's_20230316035938_20230307123639'))
-    # for submit_info in c.get_submits(refresh=True):
-    #     print(submit_info)
-    for x in c.get_submits(submitId='s_20230316035938_20230307123639'):
-        print(x)
+    for submit_info in c.get_submits(submitId='', refresh=True):
+        if submit_info['competitionId'] in comp.keys():
+            print(submit_info)

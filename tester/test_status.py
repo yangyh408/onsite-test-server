@@ -14,7 +14,7 @@ def listen(func):
         }
         try:
             result = func(func_cls, *args, **kwargs)
-        except:
+        except Exception as e:
             result = None
             status['status'] = 'ERROR'
             status['error_msg'] = traceback.format_exc()
