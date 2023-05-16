@@ -76,7 +76,30 @@ def evaluating_multiple_scenarios(trajectory_path: str, scenario_path: str, inte
             dd_y.append(0)
             turn_a.append(0)
         else:
-            output = pd.read_csv(file_path)
+            try:
+                output = pd.read_csv(file_path)
+            except:
+                safety_score.append(0)
+                efficiency_score.append(0)
+                comfort_score.append(0)
+                all_score.append(0)
+                Mean_ttc.append(0)
+                Oppo_lane_rate.append(0)
+                Out_lane_rate.append(0)
+                Run_red.append(0)
+                Done_ornot.append(0)
+                Mean_v.append(0)
+                Distance_todest.append(0)
+                a_x.append(0)
+                d_x.append(0)
+                a_y.append(0)
+                d_y.append(0)
+                aa_x.append(0)
+                dd_x.append(0)
+                aa_y.append(0)
+                dd_y.append(0)
+                turn_a.append(0)
+                continue
             if len(output)==1 or output['end'].iloc[-1]==-1:
                 safety_score.append(0)
                 efficiency_score.append(0)
