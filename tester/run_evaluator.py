@@ -27,9 +27,9 @@ class RunEvaluator():
         return sum(result[4])/len(result[4])
 
 if __name__ == '__main__':
-    input_dir = os.path.join(os.path.dirname(__file__), '../scenes/A/test/inputs')
-    output_dir = os.path.join(os.path.dirname(__file__), '../temp/test_outputs')
-    record_dir = os.path.join(os.path.dirname(__file__), '../record/test_outputs')
+    input_dir = os.path.join(os.path.dirname(__file__), './idm_demo/inputs')
+    output_dir = os.path.join(os.path.dirname(__file__), './idm_demo/outputs')
+    record_dir = os.path.join(os.path.dirname(__file__), './idm_demo/outputs')
     evaluator = RunEvaluator(save_record = True)
     print(evaluator._run_evaluate(input_dir, output_dir, record_dir))
     # result = evaluating_multiple_scenarios(output_dir, input_dir)
