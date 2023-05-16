@@ -1,0 +1,227 @@
+<?xml version='1.0' encoding='utf-8'?>
+<OpenSCENARIO>
+	<FileHeader revMajor="1" revMinor="0" date="2023-03-22T11:27:00" description="scenario_SinD" author="OnSite_TOPS" />
+	<ParameterDeclarations />
+	<CatalogLocations />
+	<RoadNetwork>
+		<LogicFile filepath="8_5_1_477.xodr" />
+	</RoadNetwork>
+	<Entities>
+		<ScenarioObject name="Ego">
+			<Vehicle name="Default_car" vehicleCategory="car">
+				<BoundingBox>
+					<Center x="1.5000000000000000e+00" y="0.0000000000000000e+00" z="9.0000000000000002e-01" />
+					<Dimensions width="1.7744720622443950e+00" length="4.0834198678505684e+00" height="1.8000000000000000e+00" />
+				</BoundingBox>
+				<Performance maxSpeed="200" maxAcceleration="200" maxDeceleration="10.0" />
+				<Axles>
+					<FrontAxle maxSteering="0.5" wheelDiameter="0.5" trackWidth="1.75" positionX="2.8" positionZ="0.25" />
+					<RearAxle maxSteering="0.0" wheelDiameter="0.5" trackWidth="1.75" positionX="0.0" positionZ="0.25" />
+				</Axles>
+				<Properties />
+			</Vehicle>
+		</ScenarioObject>
+		<ScenarioObject name="A1">
+			<Vehicle name="Default_car" vehicleCategory="car">
+				<BoundingBox>
+					<Center x="1.5000000000000000e+00" y="0.0000000000000000e+00" z="9.0000000000000002e-01" />
+					<Dimensions width="1.6755365405632112e+00" length="4.2639886779724794e+00" height="1.8000000000000000e+00" />
+				</BoundingBox>
+				<Performance maxSpeed="200" maxAcceleration="200" maxDeceleration="10.0" />
+				<Axles>
+					<FrontAxle maxSteering="0.5" wheelDiameter="0.5" trackWidth="1.75" positionX="2.8" positionZ="0.25" />
+					<RearAxle maxSteering="0.0" wheelDiameter="0.5" trackWidth="1.75" positionX="0.0" positionZ="0.25" />
+				</Axles>
+				<Properties />
+			</Vehicle>
+		</ScenarioObject>
+	</Entities>
+	<Storyboard>
+		<Init>
+			<Actions>
+				<GlobalAction>
+					<EnvironmentAction>
+						<Environment name="Default_Environment">
+							<TimeOfDay animation="false" dateTime="2023-03-05T11:36:00" />
+							<Weather cloudState="free">
+								<Sun intensity="1.0" azimuth="0.0" elevation="1.571" />
+								<Fog visualRange="100000.0" />
+								<Precipitation precipitationType="dry" intensity="0.0" />
+							</Weather>
+							<RoadCondition frictionScaleFactor="1.0" />
+						</Environment>
+					</EnvironmentAction>
+				</GlobalAction>
+				<Private entityRef="Ego">
+					<!--Information of the ego vehicle will be hidden, and its initial state and driving task will be explained in the comments below-->
+					<!--[Initial State] v_init = 6.849045826050917, x_init = 15.933760216897706, y_init = -6.213472811327196, heading_init = 1.602212253330794-->
+					<!--[Driving Task] x_target = (9.685667805787348, 19.685667805787347), y_target = (36.60330560387743, 38.60330560387743)-->
+				</Private>
+			</Actions>
+		</Init>
+		<Story name="inside_intersection">
+			<ParameterDeclarations />
+			<Act name="Act_A1">
+				<ManeuverGroup maximumExecutionCount="1" name="Squence_A1">
+					<Actors selectTriggeringEntities="false">
+						<EntityRef entityRef="A1" />
+					</Actors>
+					<Maneuver name="Maneuver1">
+						<Event name="Event1" priority="overwrite">
+							<Action name="Action1">
+								<PrivateAction>
+									<RoutingAction>
+										<FollowTrajectoryAction>
+											<Trajectory name="Trajectory_A1" closed="false">
+												<Shape>
+													<Polyline>
+														<Vertex time="0.0">
+															<Position>
+																<WorldPosition x="-1.4070702920351575e+01" y="1.9393029999601897e+01" z="0.0000000000000000e+00" h="1.0561162304530700e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.1">
+															<Position>
+																<WorldPosition x="-1.4790910324038562e+01" y="1.9441479781856124e+01" z="0.0000000000000000e+00" h="7.7430727862805998e-03" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.2">
+															<Position>
+																<WorldPosition x="-1.5521774624250288e+01" y="1.9490783725328765e+01" z="0.0000000000000000e+00" h="1.4420518426163001e-03" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.30000000000000004">
+															<Position>
+																<WorldPosition x="-1.6260615231217894e+01" y="1.9712762171180984e+01" z="0.0000000000000000e+00" h="3.1635904300496023e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.4">
+															<Position>
+																<WorldPosition x="-1.6990319553467874e+01" y="1.9758627848602000e+01" z="0.0000000000000000e+00" h="3.1715574471297070e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.5">
+															<Position>
+																<WorldPosition x="-1.7727597141101299e+01" y="1.9805423147896921e+01" z="0.0000000000000000e+00" h="3.1746970120527602e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.6000000000000001">
+															<Position>
+																<WorldPosition x="-1.8464692305538019e+01" y="1.9841364516802798e+01" z="0.0000000000000000e+00" h="3.1754346808687655e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.7000000000000001">
+															<Position>
+																<WorldPosition x="-1.9211471186937501e+01" y="1.9879449883852587e+01" z="0.0000000000000000e+00" h="3.1796295583379548e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.8">
+															<Position>
+																<WorldPosition x="-1.9962814143225003e+01" y="1.9917997906590639e+01" z="0.0000000000000000e+00" h="3.1896097903541736e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="0.9">
+															<Position>
+																<WorldPosition x="-2.0719011975706060e+01" y="1.9952411670266891e+01" z="0.0000000000000000e+00" h="3.1983059750550487e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.0">
+															<Position>
+																<WorldPosition x="-2.1476772315886809e+01" y="1.9965815822001609e+01" z="0.0000000000000000e+00" h="3.2068875647190556e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.1">
+															<Position>
+																<WorldPosition x="-2.2240751939671771e+01" y="1.9970480036047544e+01" z="0.0000000000000000e+00" h="3.2105590494708856e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+														<Vertex time="1.2000000000000002">
+															<Position>
+																<WorldPosition x="-2.3000869965110439e+01" y="1.9951246579111569e+01" z="0.0000000000000000e+00" h="3.2109591890361981e+00" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+															</Position>
+														</Vertex>
+													</Polyline>
+												</Shape>
+											</Trajectory>
+											<TimeReference>
+												<Timing domainAbsoluteRelative="absolute" scale="1.0" offset="0.0" />
+											</TimeReference>
+											<TrajectoryFollowingMode followingMode="follow" />
+										</FollowTrajectoryAction>
+									</RoutingAction>
+								</PrivateAction>
+							</Action>
+							<StartTrigger>
+								<ConditionGroup>
+									<Condition name="" delay="0.0" conditionEdge="none">
+										<ByValueCondition>
+											<SimulationTimeCondition value="0.00" rule="greaterThan" />
+										</ByValueCondition>
+									</Condition>
+								</ConditionGroup>
+							</StartTrigger>
+						</Event>
+						<Event name="AddEntityEvent" priority="parallel">
+							<Action name="AddEntityAction">
+								<GlobalAction>
+									<EntityAction entityRef="A1">
+										<AddEntityAction>
+											<Position>
+												<WorldPosition x="-1.4070702920351575e+01" y="1.9393029999601897e+01" z="0.0000000000000000e+00" h="1.0561162304530700e-02" p="0.0000000000000000e+00" r="0.0000000000000000e+00" />
+											</Position>
+										</AddEntityAction>
+									</EntityAction>
+								</GlobalAction>
+							</Action>
+							<StartTrigger>
+								<ConditionGroup>
+									<Condition conditionEdge="none" delay="0.0" name="AddEntityCondition">
+										<ByValueCondition>
+											<SimulationTimeCondition rule="greaterOrEqual" value="0.00" />
+										</ByValueCondition>
+									</Condition>
+								</ConditionGroup>
+							</StartTrigger>
+						</Event>
+						<Event name="DeleteEntityEvent" priority="parallel">
+							<Action name="DelEntityAction">
+								<GlobalAction>
+									<EntityAction entityRef="A1">
+										<DeleteEntityAction />
+									</EntityAction>
+								</GlobalAction>
+							</Action>
+							<StartTrigger>
+								<ConditionGroup>
+									<Condition conditionEdge="none" delay="1.2000000000000002" name="DelEntityCondition">
+										<ByValueCondition>
+											<SimulationTimeCondition rule="greaterOrEqual" value="0.00" />
+										</ByValueCondition>
+									</Condition>
+								</ConditionGroup>
+							</StartTrigger>
+						</Event>
+					</Maneuver>
+				</ManeuverGroup>
+				<StartTrigger>
+					<ConditionGroup>
+						<Condition name="" delay="0" conditionEdge="rising">
+							<ByValueCondition>
+								<SimulationTimeCondition value="0" rule="greaterThan" />
+							</ByValueCondition>
+						</Condition>
+					</ConditionGroup>
+				</StartTrigger>
+			</Act>
+		</Story>
+		<StopTrigger>
+			<ConditionGroup>
+				<Condition name="stop" delay="0" conditionEdge="rising">
+					<ByValueCondition>
+						<SimulationTimeCondition value="5.625000000000001" rule="greaterThan" />
+					</ByValueCondition>
+				</Condition>
+			</ConditionGroup>
+		</StopTrigger>
+	</Storyboard>
+</OpenSCENARIO>
