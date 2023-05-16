@@ -109,6 +109,21 @@ def write_answersheet_ramp(outputs_path,scenario_path):
     x_ego=np.array(trajectory['x_ego'])
     y_ego=np.array(trajectory['y_ego'])
     laneid_ego=np.zeros(shape=(np.shape(x_ego)[0], 1)).astype(np.str_)
+
+    path_openScenario = scenario_path
+    for file in os.listdir(scenario_path):
+        if '.xosc' in file:
+            path_openScenario = os.path.join(scenario_path, file)
+    openScenario_info = parse_openScenario(path_openScenario)
+    goal_x = openScenario_info['goal_x'][0]
+    goal_y = openScenario_info['goal_y'][0]
+    initial_x=openScenario_info['initial_x']
+    initial_y=openScenario_info['initial_y']
+    if initial_x>goal_x:
+        direction="rtl"
+    else:
+        direction="ltr"
+
     for i in range(0,np.shape(x_ego)[0]):
         for discrete_lane in replay_info.discretelanes:
             vert_x, vert_y = RelationJudgement.sampling_from_vertices_inside_intersection(discrete_lane, 5)
@@ -170,7 +185,7 @@ def write_answersheet_ramp(outputs_path,scenario_path):
         nonego = pd.concat([nonego, laneid_nonego], axis=1)
     #print(nonego)
     #nonego.to_csv("nonego.csv")
-
+##判断前车
     nonego = nonego.values.tolist()
     pre_x = []
     pre_y = []
@@ -182,7 +197,10 @@ def write_answersheet_ramp(outputs_path,scenario_path):
         for t in range(0, np.shape(vx_egodata)[0]):
             distance = []
             for i in range(0, num_nonego ):
-                distance.append(nonego[t][7 * i] - x_ego[t])
+                if direction=="ltr":
+                    distance.append(nonego[t][7 * i] - x_ego[t])
+                else:
+                    distance.append(-nonego[t][7 * i] + x_ego[t])
                 if distance[i] < 0 or laneid_ego[t] != nonego[t][7 * num_nonego + i]:
                     distance[i] = 9999
             if distance:
@@ -254,7 +272,6 @@ def write_answersheet_ramp(outputs_path,scenario_path):
     answersheet['length_pre'] = pre_length
     answersheet['reward'] = trajectory['end']
 
-
     return answersheet
 
 
@@ -263,15 +280,23 @@ def Evaluation_ramp(list_HAV,scenario,scenario_path,safety=50,efficiency=30,comf
     replay_info, zd_id, destx_left,desty_left,destx_right,desty_right = parserd_v2(scenario_path)
     path_openScenario=os.path.join(scenario_path+"/"+scenario+"_exam.xosc")
     openScenario_info = parse_openScenario(path_openScenario)
-    goal_x = openScenario_info['goal_x'][0]
-    goal_y = openScenario_info['goal_y'][0]
+    goal_x1 = openScenario_info['goal_x'][0]
+    goal_y1 = openScenario_info['goal_y'][0]
+    goal_x2= openScenario_info['goal_x'][1]
+    goal_y2 = openScenario_info['goal_y'][1]
+    initial_x = openScenario_info['initial_x']
+    if initial_x > goal_x1:
+        direction="rtl"
+        goal_x=goal_x1
+    else:
+        direction="ltr"
+        goal_x = goal_x2
+    goal_y=0.5*(goal_y1+goal_y2)
     destinationid=""
     for discrete_lane in replay_info.discretelanes:
         vert_x, vert_y = RelationJudgement.sampling_from_vertices_inside_intersection(discrete_lane, 5)
         if RelationJudgement.pnpoly(len(vert_x), vert_x, vert_y,  goal_x, goal_y):
             destinationid = discrete_lane.lane_id
-
-
 
     destinationx = goal_x
     destinationy = goal_y
@@ -297,17 +322,18 @@ def Evaluation_ramp(list_HAV,scenario,scenario_path,safety=50,efficiency=30,comf
             score_safe = 50
         else:  # TTC<1扣分
             for i in range(0,np.shape(List_HAV0)[0]):
-                if list_HAV2_nopre[i]!=zd_id:
-                    TTC_HAVi = (List_HAV0[i, 13] - List_HAV0[i, 1]) / (
-                                List_HAV0[i, 5] - List_HAV0[i, 17])
-                else:
-                    TTC_HAVi = ((List_HAV0[i, 14] - List_HAV0[i, 2])**2+(List_HAV0[i, 13] - List_HAV0[i, 1])**2)**0.5 / (
-                                abs(List_HAV0[i, 3]) - abs(List_HAV0[i, 15]))
+                #if list_HAV2_nopre[i]!=zd_id:
+                    #TTC_HAVi = (List_HAV0[i, 13] - List_HAV0[i, 1]) / (
+                                #List_HAV0[i, 5] - List_HAV0[i, 17])
+                #else:
+                TTC_HAVi = ((List_HAV0[i, 14] - List_HAV0[i, 2])**2+(List_HAV0[i, 13] - List_HAV0[i, 1])**2)**0.5 / (
+                            abs(List_HAV0[i, 3]) - abs(List_HAV0[i, 15]))
                 TTC_HAV.append(TTC_HAVi)
-            if len(TTC_HAV) != 0:
-                mean_TTC = sum(TTC_HAV) / len(TTC_HAV)
+
             TTC_HAV=np.array(TTC_HAV)
             TTC_HAV = TTC_HAV[TTC_HAV > 0]
+            if len(TTC_HAV) != 0:
+                mean_TTC = sum(TTC_HAV) / len(TTC_HAV)
             TTC_HAV = TTC_HAV[TTC_HAV < 1]
             score_safe = safety - np.shape(TTC_HAV)[0] / np.shape(list_HAV)[0] * safety
 
@@ -392,7 +418,10 @@ def Evaluation_ramp(list_HAV,scenario,scenario_path,safety=50,efficiency=30,comf
     for i in range(0,np.shape(list_HAV)[0]-1):
         v_yaw[i + 1] =abs((list_HAV[i + 1,4] - list_HAV[i,4]) /dt)
     v_yaw=v_yaw[v_yaw>500]
-    v_err = list_HAV[list_HAV[:, 5] <-1, 5]
+    if direction=="ltr":
+        v_err = list_HAV[list_HAV[:, 5] <-1, 5]
+    else:
+        v_err = list_HAV[list_HAV[:, 5] >1, 5]
     if np.shape(v_yaw)[0]!=0 or (np.shape(list_HAV)[0]==1) or (len(list_HAV[abs(list_HAV[:, 7]) >200, 7])!=0)or(len(list_HAV[abs(list_HAV[:, 8]) >200, 8])!=0)or(np.shape(v_err)[0]!=0):
         score_safe=0
         score_efficiency=0
