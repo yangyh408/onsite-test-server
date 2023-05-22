@@ -287,10 +287,10 @@ def Evaluation_ramp(list_HAV,scenario,scenario_path,safety=50,efficiency=30,comf
     initial_x = openScenario_info['initial_x']
     if initial_x > goal_x1:
         direction="rtl"
-        goal_x=goal_x1
+        goal_x=goal_x2
     else:
         direction="ltr"
-        goal_x = goal_x2
+        goal_x = goal_x1
     goal_y=0.5*(goal_y1+goal_y2)
     destinationid=""
     for discrete_lane in replay_info.discretelanes:
@@ -361,15 +361,25 @@ def Evaluation_ramp(list_HAV,scenario,scenario_path,safety=50,efficiency=30,comf
         dis=((list_HAV[i+1, 1]-list_HAV[i, 1])**2+(list_HAV[i+1, 2]-list_HAV[i, 2])**2)**0.5
         distance_HAV=distance_HAV+dis
     time_cost = distance_HAV /33.33
-
-    if dest_HAVx >= destinationx  and dest_HAVid==destinationid:
-        score_efficiency1 = 15
-        done_ornot = 0
-        distance_todest = 0
+    if direction=="ltr":
+        if dest_HAVx >= destinationx and dest_HAVid==destinationid:
+            score_efficiency1 = 15
+            done_ornot = 0
+            distance_todest = 0
+        else:
+            score_efficiency1 = 0
+            done_ornot = 1
+            distance_todest = ((destinationx - dest_HAVx) ** 2 + (destinationy - dest_HAVy) ** 2) ** 0.5
     else:
-        score_efficiency1 = 0
-        done_ornot = 1
-        distance_todest = ((destinationx - dest_HAVx) ** 2 + (destinationy - dest_HAVy) ** 2) ** 0.5
+        if dest_HAVx <= destinationx and dest_HAVid==destinationid:
+            score_efficiency1 = 15
+            done_ornot = 0
+            distance_todest = 0
+        else:
+            score_efficiency1 = 0
+            done_ornot = 1
+            distance_todest = ((destinationx - dest_HAVx) ** 2 + (destinationy - dest_HAVy) ** 2) ** 0.5
+
     #print(dest_HAVx,dest_HAVy,destinationx,destinationy)
     time_cost_HAV = np.shape(HAV)[0] * dt
     score_efficiency2 = min(15, time_cost / time_cost_HAV * 15)
