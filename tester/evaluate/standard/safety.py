@@ -166,8 +166,12 @@ class SafetyCriteria:
         run_red=0
         x_coordinate = list(self.info_table.ego_front_vehicle_info.loc[:, 'x_ego'])
         y_coordinate = list(self.info_table.ego_front_vehicle_info.loc[:, 'y_ego'])
+        yaw_coordinate=list(self.info_table.ego_front_vehicle_info.loc[:, 'yaw_ego'])
+        yaw_diff1=float(yaw_coordinate[-1])-float(yaw_coordinate[0])
         coordinate = list(zip(x_coordinate, y_coordinate))
-        if self.info_table.relation_judgement.info.replay_info['travel_direction'][0] == 'W' and self.info_table.relation_judgement.info.replay_info['travel_direction']!=('W','S'):
+
+        if self.info_table.relation_judgement.info.replay_info['travel_direction'][0] == 'W' and self.info_table.relation_judgement.info.replay_info['travel_direction']!=['W','S'] \
+                and self.info_table.relation_judgement.info.replay_info['travel_direction']!=['W','IN']:
             for index, (x, y) in enumerate(coordinate):
                 if (float(x) < float(self.info_table.relation_judgement.info.replay_info['stop_line']['W'][3])) and (
                         float(self.info_table.relation_judgement.info.replay_info['stop_line']['S'][3]) < float(y) <
@@ -186,7 +190,8 @@ class SafetyCriteria:
                                 self.deducted_score += 10
                                 #print("闯红灯")
                                 run_red=1
-        elif self.info_table.relation_judgement.info.replay_info['travel_direction'][0] == 'E' and self.info_table.relation_judgement.info.replay_info['travel_direction']!=('E','N'):
+        elif self.info_table.relation_judgement.info.replay_info['travel_direction'][0] == 'E' and self.info_table.relation_judgement.info.replay_info['travel_direction']!=['E','N']\
+                and self.info_table.relation_judgement.info.replay_info['travel_direction']!=['E','IN']:
             for index, (x, y) in enumerate(coordinate):
                 if (float(x) > float(self.info_table.relation_judgement.info.replay_info['stop_line']['E'][3])) and (
                         float(self.info_table.relation_judgement.info.replay_info['stop_line']['S'][3]) < float(y) <
@@ -205,7 +210,8 @@ class SafetyCriteria:
                                 self.deducted_score += 10
                                 #print("闯红灯")
                                 run_red = 1
-        elif self.info_table.relation_judgement.info.replay_info['travel_direction'][0] == 'N' and self.info_table.relation_judgement.info.replay_info['travel_direction']!=('N','W'):
+        elif self.info_table.relation_judgement.info.replay_info['travel_direction'][0] == 'N' and self.info_table.relation_judgement.info.replay_info['travel_direction']!=['N','W'] \
+                and self.info_table.relation_judgement.info.replay_info['travel_direction']!=['N','IN']:
             for index, (x, y) in enumerate(coordinate):
                 if (float(y) > float(self.info_table.relation_judgement.info.replay_info['stop_line']['N'][3])) and (
                         float(self.info_table.relation_judgement.info.replay_info['stop_line']['W'][3]) < float(x) <
@@ -224,7 +230,8 @@ class SafetyCriteria:
                                 self.deducted_score += 10
                                 #print("闯红灯")
                                 run_red = 1
-        elif self.info_table.relation_judgement.info.replay_info['travel_direction'][0] == 'S' and self.info_table.relation_judgement.info.replay_info['travel_direction']!=('S','E'):
+        elif self.info_table.relation_judgement.info.replay_info['travel_direction'][0] == 'S' and self.info_table.relation_judgement.info.replay_info['travel_direction']!=['S','E']\
+                and self.info_table.relation_judgement.info.replay_info['travel_direction']!=['S','IN']:
             for index, (x, y) in enumerate(coordinate):
                 if (float(y) < float(self.info_table.relation_judgement.info.replay_info['stop_line']['S'][3])) and (
                         float(self.info_table.relation_judgement.info.replay_info['stop_line']['W'][3]) < float(x) <
@@ -242,6 +249,86 @@ class SafetyCriteria:
                                     self.info_table.relation_judgement.info.light_info[index + 1] == 'red':
                                 self.deducted_score += 10
                                 #print("闯红灯")
+                                run_red = 1
+        elif self.info_table.relation_judgement.info.replay_info['travel_direction'] == ['W','IN']:
+            for index, (x, y) in enumerate(coordinate):
+                if (float(x) < float(self.info_table.relation_judgement.info.replay_info['stop_line']['W'][3])) and (
+                        float(self.info_table.relation_judgement.info.replay_info['stop_line']['S'][3]) < float(y) <
+                        float(self.info_table.relation_judgement.info.replay_info['stop_line']['N'][3])):
+                    if index == len(coordinate) - 1:
+                        pass
+                    else:
+                        if (float(coordinate[index + 1][0]) > float(
+                                self.info_table.relation_judgement.info.replay_info['stop_line'][
+                                    'W'][3])) and (
+                                float(self.info_table.relation_judgement.info.replay_info['stop_line']['S'][3]) <
+                                float(coordinate[index + 1][1]) <
+                                float(self.info_table.relation_judgement.info.replay_info['stop_line']['N'][3])):
+                            if self.info_table.relation_judgement.info.light_info[index] == 'red' and \
+                                    self.info_table.relation_judgement.info.light_info[index + 1] == 'red' and \
+                                    yaw_diff1<=0:
+                                self.deducted_score += 10
+                                # print("闯红灯")
+                                run_red = 1
+        elif self.info_table.relation_judgement.info.replay_info['travel_direction'] == ['E','IN']:
+            for index, (x, y) in enumerate(coordinate):
+                if (float(x) > float(self.info_table.relation_judgement.info.replay_info['stop_line']['E'][3])) and (
+                        float(self.info_table.relation_judgement.info.replay_info['stop_line']['S'][3]) < float(y) <
+                        float(self.info_table.relation_judgement.info.replay_info['stop_line']['N'][3])):
+                    if index == len(coordinate) - 1:
+                        pass
+                    else:
+                        if (float(coordinate[index + 1][0]) < float(
+                                self.info_table.relation_judgement.info.replay_info['stop_line'][
+                                    'E'][3])) and (
+                                float(self.info_table.relation_judgement.info.replay_info['stop_line']['S'][3]) <
+                                float(coordinate[index + 1][1]) <
+                                float(self.info_table.relation_judgement.info.replay_info['stop_line']['N'][3])):
+                            if self.info_table.relation_judgement.info.light_info[index] == 'red' and \
+                                    self.info_table.relation_judgement.info.light_info[index + 1] == 'red' and \
+                                    yaw_diff1>=0:
+                                self.deducted_score += 10
+                                # print("闯红灯")
+                                run_red = 1
+        elif  self.info_table.relation_judgement.info.replay_info['travel_direction']==['N','IN']:
+            for index, (x, y) in enumerate(coordinate):
+                if (float(y) > float(self.info_table.relation_judgement.info.replay_info['stop_line']['N'][3])) and (
+                        float(self.info_table.relation_judgement.info.replay_info['stop_line']['W'][3]) < float(x) <
+                        float(self.info_table.relation_judgement.info.replay_info['stop_line']['E'][3])):
+                    if index == len(coordinate) - 1:
+                        pass
+                    else:
+                        if (float(coordinate[index + 1][1]) < float(
+                                self.info_table.relation_judgement.info.replay_info['stop_line'][
+                                    'N'][3])) and (
+                                float(self.info_table.relation_judgement.info.replay_info['stop_line']['W'][3]) <
+                                float(coordinate[index + 1][0]) <
+                                float(self.info_table.relation_judgement.info.replay_info['stop_line']['E'][3])):
+                            if self.info_table.relation_judgement.info.light_info[index] == 'red' and \
+                                    self.info_table.relation_judgement.info.light_info[index + 1] == 'red' and \
+                                    yaw_diff1>=0:
+                                self.deducted_score += 10
+                                #print("闯红灯")
+                                run_red = 1
+        elif  self.info_table.relation_judgement.info.replay_info['travel_direction'] == ['S', 'IN']:
+            for index, (x, y) in enumerate(coordinate):
+                if (float(y) < float(self.info_table.relation_judgement.info.replay_info['stop_line']['S'][3])) and (
+                        float(self.info_table.relation_judgement.info.replay_info['stop_line']['W'][3]) < float(x) <
+                        float(self.info_table.relation_judgement.info.replay_info['stop_line']['E'][3])):
+                    if index == len(coordinate) - 1:
+                        pass
+                    else:
+                        if (float(coordinate[index + 1][1]) > float(
+                                self.info_table.relation_judgement.info.replay_info['stop_line'][
+                                    'S'][3])) and (
+                                float(self.info_table.relation_judgement.info.replay_info['stop_line']['W'][3]) <
+                                float(coordinate[index + 1][0]) <
+                                float(self.info_table.relation_judgement.info.replay_info['stop_line']['E'][3])):
+                            if self.info_table.relation_judgement.info.light_info[index] == 'red' and \
+                                    self.info_table.relation_judgement.info.light_info[index + 1] == 'red' and \
+                                    yaw_diff1>=0:
+                                self.deducted_score += 10
+                                # print("闯红灯")
                                 run_red = 1
         return run_red
 
