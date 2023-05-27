@@ -36,7 +36,7 @@ if __name__ == '__main__':
     # pool = ProcessPoolExecutor()
     pool = Pool()
     cpu_cores = Manager().Queue()
-    for i in range(16):
+    for i in range(os.cpu_count()):
         cpu_cores.put(i)
 
     competition_info = load_conf()
