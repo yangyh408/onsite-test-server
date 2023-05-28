@@ -157,8 +157,10 @@ class Parser:
 
         end_x = self.info.openScenario_info['goal_x'][-1]
         end_y = self.info.openScenario_info['goal_y'][-1]
-
+        # print(start_x,start_y)
+        # print(self.info.replay_info['stop_line']['W'][3])
         if start_x <= self.info.replay_info['stop_line']['W'][3]:
+            #print("W")
             if end_y >= self.info.replay_info['stop_line']['N'][3]:
                 self.info.replay_info['target_travel_direction'] = ('W', 'N')
             elif end_y <= self.info.replay_info['stop_line']['S'][3]:
@@ -231,7 +233,8 @@ class Parser:
                 self.info.replay_info['target_travel_direction'][1]
             )  # 这里是说，如果最后一个点时，规控器失效的话，轨迹点可能不在任何一个区域中，而在其他地方，这时另行驶方向与目标行驶方向一致
         if len(self.info.replay_info['travel_direction']) != 2:
-            self.info.replay_info['travel_direction'].remove('IN')
+            if 'IN' in self.info.replay_info['travel_direction']:
+                self.info.replay_info['travel_direction'].remove('IN')
             self.info.replay_info['travel_direction'] = self.info.replay_info['travel_direction'][:2]
         if len(self.info.replay_info['travel_direction']) != 2:
             raise ValueError('场景{0}存在问题'.format(self.info.replay_info["scenario_name"]))

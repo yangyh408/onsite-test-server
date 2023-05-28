@@ -31,14 +31,25 @@ def zoning_first_id(entrance_road, exit_road):
     EO.append(exit_road[max_index[0]])
     NO.append(exit_road[max_index[1]])
     SO.append(exit_road[min_index[1]])
+    #print([WI, EI, NI, SI],[WO, EO, NO, SO])
     return [WI, EI, NI, SI], [WO, EO, NO, SO]
 
 
 def zoning_other_id(in_, out_, outside_intersection_road):
+    # for i in in_:
+    #     print(i.id)
+    # for idx_1 in in_:
+    #     for idx_2 in idx_1:
+    #         print(idx_2.id)
+    # print(in_)
     for i in in_:
+        #print(i[-1].link.successor)
+        # if i[-1].link.successor:
         while i[-1].link.successor in outside_intersection_road:
-            i.append(i[-1].link.successor)
+              i.append(i[-1].link.successor)
     for i in out_:
+
+        #if i[-1].link.successor:
         while i[-1].link.predecessor in outside_intersection_road:
             i.append(i[-1].link.predecessor)
     return in_, out_
