@@ -228,10 +228,21 @@ class Parser:
                     self.info.replay_info['travel_direction'].append(key[0])
 
         if len(self.info.replay_info['travel_direction']) == 1:
-
+            end_x1 = self.info.trajectory_info['ego']['x'][-10]
+            end_y1 = self.info.trajectory_info['ego']['y'][-10]
+            end_point1 = shapely.geometry.Point(end_x1, end_y1)
+            for key in self.info.zone.keys():
+                if self.info.zone[key].buffer(0.001).intersects(end_point1):
+                    if key[-1] == 'O':
+                        self.info.replay_info['travel_direction'].append(key[0])
+                    elif key == 'IN':
+                        self.info.replay_info['travel_direction'].append(key)
+                    elif key[-1] == 'I':
+                        self.info.replay_info['travel_direction'].append(key[0])
+        if len(self.info.replay_info['travel_direction']) == 1:
             self.info.replay_info['travel_direction'].append(
-                self.info.replay_info['target_travel_direction'][1]
-            )  # 这里是说，如果最后一个点时，规控器失效的话，轨迹点可能不在任何一个区域中，而在其他地方，这时另行驶方向与目标行驶方向一致
+                self.info.replay_info['target_travel_direction'][1])
+            # 这里是说，如果最后一个点时，规控器失效的话，轨迹点可能不在任何一个区域中，而在其他地方，这时另行驶方向与目标行驶方向一致
         if len(self.info.replay_info['travel_direction']) != 2:
             if 'IN' in self.info.replay_info['travel_direction']:
                 self.info.replay_info['travel_direction'].remove('IN')
