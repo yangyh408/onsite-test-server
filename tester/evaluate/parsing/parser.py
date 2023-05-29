@@ -250,7 +250,6 @@ class Parser:
         if len(self.info.replay_info['travel_direction']) != 2:
             raise ValueError('场景{0}存在问题'.format(self.info.replay_info["scenario_name"]))
 
-        #print(self.info.replay_info['target_travel_direction'])
         return
 
     def judge_stop_line(self) -> None:
@@ -436,8 +435,10 @@ class Parser:
         for road in self.open_drive_xml.roads:
             if road.junction is None:
                 outside_intersection_road.append(road)
+                #print(road.id)
                 if road.link.predecessor is None:
                     entrance_road.append(road)
+
                 if road.link.successor is None:
                     exit_road.append(road)
             else:
@@ -456,6 +457,7 @@ class Parser:
         for i in out_:
             for j in i:
                 out_id[out_.index(i)].append(j.id)
+
         # (in_id)
         # print(out_id)
         return in_id, out_id, inside_intersection_road
@@ -468,6 +470,7 @@ class Parser:
             self.info.zone[zone_id] = self.get_single_zone_bord(zone)
         for zone_id, zone in zip(OUT, out_id):
             self.info.zone[zone_id] = self.get_single_zone_bord(zone)
+            #print(self.info.zone['SO'])
         self.info.zone['IN'] = self.intersection_zone_version3()
         return
 
@@ -532,9 +535,13 @@ class Parser:
                 for lane in lane_section.allLanes:
                     lane_id_list.append(lane)
                 lane_id_list.sort(key=lambda x: x.id)
-                # print(len(lane_id_list))
-                bord_list.append('.'.join((str(road_id), str(lane_section.idx), str(lane_id_list[0].id), str(-1))))
-                bord_list.append('.'.join((str(road_id), str(lane_section.idx), str(lane_id_list[-2].id), str(-1))))
+                if lane_id_list[0].type != 'shoulder':
+                    bord_list.append('.'.join((str(road_id), str(lane_section.idx), str(lane_id_list[0].id), str(-1))))
+                    bord_list.append('.'.join((str(road_id), str(lane_section.idx), str(lane_id_list[-2].id), str(-1))))
+                else:
+                    bord_list.append('.'.join((str(road_id), str(lane_section.idx), str(lane_id_list[1].id), str(-1))))
+                    bord_list.append('.'.join((str(road_id), str(lane_section.idx), str(lane_id_list[-2].id), str(-1))))
+                #print(bord_list)
         '''
         for discrete_lane in self.info.openDrive_info.discretelanes:
             if discrete_lane.lane_id in bord_list:
@@ -544,10 +551,13 @@ class Parser:
         '''
         for even in range(0, len(bord_list), 2):
             for discrete_lane in self.info.openDrive_info.discretelanes:
+                #print(discrete_lane.lane_id,bord_list[even])
                 if discrete_lane.lane_id == bord_list[even]:
                     bord_point_array = np.vstack((bord_point_array, discrete_lane.right_vertices))
+
         for odd in range(1, len(bord_list), 2):
             for discrete_lane in self.info.openDrive_info.discretelanes:
+                #print(discrete_lane.lane_id,bord_list[odd])
                 if discrete_lane.lane_id == bord_list[odd]:
                     bord_point_array = np.vstack((bord_point_array, discrete_lane.left_vertices[::-1]))
         bord_point_array.reshape(-1, 2)
