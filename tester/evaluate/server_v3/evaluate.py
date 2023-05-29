@@ -309,8 +309,8 @@ def write_answerSheet(file_path,recording_path,start_destpath,scenario):
     answersheet['reward'] = outputs['end']
 
     #导出answersheet.csv
-    #answersheet.to_csv("answersheet.csv", index=False)
-    # print(answersheet)
+    #answersheet.to_csv(r"C:\Users\Administrator\Desktop\highd_debug\answersheet.csv", index=False)
+    #print(answersheet)
     return answersheet
 
 def Evaluation(list_HAV,start_destpath,scenario,area=0,safety=50,efficiency=30,comfort=20,dt=0.04,output_type='details'):
@@ -341,6 +341,7 @@ def Evaluation(list_HAV,start_destpath,scenario,area=0,safety=50,efficiency=30,c
         List_HAV = list_HAV[list_HAV[:, 1] > dest, :]
     else:
         List_HAV = list_HAV[list_HAV[:, 1] < dest, :]
+
     # 安全得分
     reward=np.array(list_HAV)[:, -1]
     List_HAVx = List_HAV[:, 1]
@@ -421,7 +422,7 @@ def Evaluation(list_HAV,start_destpath,scenario,area=0,safety=50,efficiency=30,c
     time_cost = distance_HAV /33.33
 
     if start > dest:
-        if dest_HAV< dest and List_HAV[-1, 13]==lane:
+        if dest_HAV< dest and list_HAV[-1, 13]==lane:
             done_ornot = 0
             distance_todest = 0
             score_efficiency1 = 15
@@ -432,17 +433,18 @@ def Evaluation(list_HAV,start_destpath,scenario,area=0,safety=50,efficiency=30,c
             score_efficiency1 =0
 
     else:
-        if dest_HAV > dest and List_HAV[-1, 13]==lane:
+        if dest_HAV > dest and list_HAV[-1, 13]==lane:
             score_efficiency1 = 15
             done_ornot = 0
             distance_todest = 0
-
         else:
             done_ornot = 1
             distance_todest = dest - dest_HAV
             #score_efficiency1 = min(15, 15 * distance_HAV / distance_tar)
             score_efficiency1 = 0
-        # print("距离：",distance_todest)
+
+        #print("距离：",distance_todest)
+        #print(dest_HAV,dest,list_HAV[-1, 13],lane)
 
 
     time_cost_HAV = np.shape(HAV)[0] * dt
