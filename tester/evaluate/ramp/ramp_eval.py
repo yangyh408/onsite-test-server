@@ -271,7 +271,7 @@ def write_answersheet_ramp(outputs_path,scenario_path):
     answersheet['width_pre'] = pre_width
     answersheet['length_pre'] = pre_length
     answersheet['reward'] = trajectory['end']
-
+    #answersheet.to_csv(r'C:\Users\Administrator\Desktop\C卷场景\ramp_debug\answer.csv')
     return answersheet
 
 
@@ -291,6 +291,7 @@ def Evaluation_ramp(list_HAV,scenario,scenario_path,safety=50,efficiency=30,comf
     else:
         direction="ltr"
         goal_x = goal_x1
+
     goal_y=0.5*(goal_y1+goal_y2)
     destinationid=""
     for discrete_lane in replay_info.discretelanes:
@@ -303,7 +304,16 @@ def Evaluation_ramp(list_HAV,scenario,scenario_path,safety=50,efficiency=30,comf
     list_HAV1=list_HAV[:,:13].astype(np.float64)
     list_HAV3=list_HAV[:,14:].astype(np.float64)
     list_HAV2=list_HAV[:,13]
-    list_HAV=np.hstack((list_HAV1,list_HAV3))
+
+    if direction=="rtl"and list_HAV[-1, 1] <= destinationx and list_HAV2[-1]=="0.0":
+         for i in range (0,np.shape(list_HAV2)[0]):
+             if list_HAV2[-1-i]!="0.0":
+                 break
+         list_HAV1 = list_HAV[:-1-i, :13].astype(np.float64)
+         list_HAV3 = list_HAV[:-1-i, 14:].astype(np.float64)
+         list_HAV2 = list_HAV[:-1-i, 13]
+    list_HAV = np.hstack((list_HAV1, list_HAV3))
+
     #print(np.shape(list_HAV))
     # 安全得分
     reward=np.array(list_HAV)[:, -1]
@@ -357,6 +367,7 @@ def Evaluation_ramp(list_HAV,scenario,scenario_path,safety=50,efficiency=30,comf
     dest_HAVy=list_HAV[-1, 2]
     dest_HAVid=list_HAV2[-1]
     distance_HAV=0
+    HAV_x=list_HAV[:,1]
     for i in range(0,np.shape(list_HAV)[0]-1):
         dis=((list_HAV[i+1, 1]-list_HAV[i, 1])**2+(list_HAV[i+1, 2]-list_HAV[i, 2])**2)**0.5
         distance_HAV=distance_HAV+dis
@@ -379,6 +390,8 @@ def Evaluation_ramp(list_HAV,scenario,scenario_path,safety=50,efficiency=30,comf
             score_efficiency1 = 0
             done_ornot = 1
             distance_todest = ((destinationx - dest_HAVx) ** 2 + (destinationy - dest_HAVy) ** 2) ** 0.5
+
+
 
     #print(dest_HAVx,dest_HAVy,destinationx,destinationy)
     time_cost_HAV = np.shape(HAV)[0] * dt
