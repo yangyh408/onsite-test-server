@@ -29,13 +29,20 @@ class TestStatus:
         self.error_path = os.path.join(record_dir, "error.txt")
         self.submitId = submitId
         self.database = database
-        self.record = {
-            'pid': pid,
-            'pull': {'status': 'WAITING', 'cost': ''},
-            'test': {'status': 'WAITING', 'cost': ''},
-            'evaluate': {'status': 'WAITING', 'cost': ''},
-            'upload': {'status': 'WAITING', 'cost': ''},
-        }
+        self.pid = pid
+    
+    def load(self, record):
+        if record:
+            self.record = json.loads(record)
+            self.record['pid'] = self.pid
+        else:
+            self.record = {
+                'pid': self.pid,
+                'pull': {'status': 'WAITING', 'cost': ''},
+                'test': {'status': 'WAITING', 'cost': ''},
+                'evaluate': {'status': 'WAITING', 'cost': ''},
+                'upload': {'status': 'WAITING', 'cost': ''},
+            }
         self._update_database()
         
     def update(self, module, listen_result=None):

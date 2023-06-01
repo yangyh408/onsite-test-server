@@ -41,6 +41,7 @@ class Tester():
         self._reset_dir(record_dir)
         
         test_status = TestStatus(record_dir, submit_info['submitId'], os.getpid(), self.db)
+        test_status.load(submit_info['testDetail'])
         
         docker = DockerTool(input_dir, output_dir, core_num)
         docker_status = docker.run(submit_info['dockerId'], test_status)
@@ -63,6 +64,31 @@ class Tester():
         else:
             upyun_link = uploader.upload(test_status)
             result = self._result(docker_status, None, upyun_link)
+        return result
+    
+    def evaluate(self, input_dir: str, submit_info: dict, core_num: int) -> dict:
+        output_dir = os.path.join(self.output_root_dir, submit_info['submitId'])
+        record_dir = os.path.join(self.record_root_dir, submit_info['submitId'])
+        self._reset_dir(record_dir)
+        
+        test_status = TestStatus(record_dir, submit_info['submitId'], os.getpid(), self.db)
+        test_status.load(submit_info['testDetail'])
+        
+        uploader = Uploader(self.output_root_dir, submit_info)
+
+        evaluator = RunEvaluator(save_record = True)
+        score = evaluator.evaluate(input_dir, output_dir, record_dir, test_status)
+        if score == -1:
+            upyun_link = uploader.upload(test_status)
+            result = self._result('EVALUATE ERROR', None, upyun_link)
+            return result
+        
+        upyun_link = uploader.upload(test_status)
+        if upyun_link:
+            result = self._result('SUCCESS', score, upyun_link)
+        else:
+            result = self._result('UPLOAD ERROR', score, None)
+
         return result
     
     def _result(self, status, score, resultLink):
