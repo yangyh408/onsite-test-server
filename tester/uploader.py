@@ -12,6 +12,7 @@ class Uploader:
         self.zip_file_path = os.path.join(output_root_dir, self.zip_file_name)
         self.output_dir = os.path.join(output_root_dir, submit_info['submitId'])
         self.remote_dir = rf"/results/{submit_info['competitionId']}/"
+        self.result_link = 'https://resource.onsite.run' + self.remote_dir + self.zip_file_name
         
     def _connect(self, username = "zhouhuajun", password = "q9ieC21p1yRaHYGqFo0N5x7OoedsDVla"):
         self.up = upyun.UpYun('onsite', username=username, password=password, endpoint=upyun.ED_AUTO)
@@ -27,7 +28,7 @@ class Uploader:
                 time.sleep(5)
         test_status.update('upload', upload_listen)
         if upload_listen['status'] == 'SUCCESS':
-            return 'https://resource.onsite.run' + self.remote_dir + self.zip_file_name
+            return self.result_link
         else:
             return None
     
