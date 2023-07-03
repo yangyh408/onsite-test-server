@@ -5,10 +5,10 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from connector import Connector
 
-SUBMITTER_ID = '20230430094609'
+SUBMITTER_ID = '20230425082036'
 PAPER_TYPE = 'B'
 COMPETITION_ID = '2023031405'
-DOCKER_ID = 'yzbyx/atjhyt7txlebsfbcmzh:1.0.1'
+DOCKER_ID = 'yangliu123123/skhfgiewbw2i4ht982bf2final20:0.0.1'
 
 if __name__ == '__main__':
     connector = Connector()

@@ -22,8 +22,7 @@ class Connector():
                                    db=DATABASE,
                                    charset='utf8'
                                    )
-        self.columns = []
-        self._get_col_name("submit")
+        self.columns = self._get_col_name("submit")
     
     def _connect(self):
         conn = self.mysql_pool.connection()
@@ -83,8 +82,10 @@ class Connector():
         
     def _get_col_name(self, table):
         script = f"show columns from {table}"
+        columns = []
         for row_info in self._db_fetch(script):
-            self.columns.append(row_info[0])
+            columns.append(row_info[0])
+        return columns
 
     def _db_fetch(self, script):
         conn, cur = self._connect()
