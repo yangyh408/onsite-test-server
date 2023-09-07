@@ -1,0 +1,16 @@
+[Unit]
+Description=onsite test server
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+PermissionsStartOnly=true
+Restart=on-failure
+RestartSec=5s
+ExecStart=/home/ubuntu/anaconda3/envs/tester/bin/python -u "/home/ubuntu/onsite-test-server/tester/__main__.py"
+LimitNOFILE=1048576
+
+[Install]
+WantedBy=multi-user.target
